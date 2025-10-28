@@ -561,6 +561,34 @@ const SkillFinder: React.FC = () => {
       
       console.log('使用API密钥:', apiKey.substring(0, 8) + '...')
       
+      // 先测试API密钥有效性
+      console.log('正在测试API密钥有效性...')
+      try {
+        const testResponse = await fetch('/api/models', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`
+          }
+        })
+        
+        console.log('API密钥测试响应状态:', testResponse.status)
+        if (testResponse.ok) {
+          const testData = await testResponse.json()
+          console.log('API密钥有效，可用模型:', testData)
+        } else {
+          const testErrorText = await testResponse.text()
+          console.error('API密钥测试失败:', testResponse.status, testErrorText)
+          throw new Error(`API密钥无效或已过期: ${testResponse.status} ${testErrorText}`)
+        }
+      } catch (testError: any) {
+        console.error('API密钥测试错误:', testError)
+        if (testError.message.includes('API密钥无效')) {
+          throw testError
+        }
+        // 如果测试请求失败，继续尝试主要请求
+        console.log('API密钥测试失败，继续尝试主要请求...')
+      }
+      
       // 调试请求详情
       console.log('请求详情:')
       console.log('URL:', '/api/chat/completions')
