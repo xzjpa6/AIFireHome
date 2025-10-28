@@ -531,7 +531,7 @@ const SkillFinder: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_DEEPSEEK_API_KEY || 'sk-fe7a3c1bb1b742378ed8d0e2e0485712'}`
+          'Authorization': `Bearer ${(import.meta as any).env?.VITE_DEEPSEEK_API_KEY || 'sk-fe7a3c1bb1b742378ed8d0e2e0485712'}`
         },
         body: JSON.stringify({
           model: 'deepseek-chat',
