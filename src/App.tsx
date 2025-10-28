@@ -692,8 +692,21 @@ const SkillFinder: React.FC = () => {
         } else {
           aiRecommendations = JSON.parse(aiResponse)
         }
+        
+        console.log('AI返回的原始数据:', aiRecommendations)
+        console.log('推荐数据:', aiRecommendations.recommendations || aiRecommendations)
+        
+        // 检查推荐数据格式
+        const recommendations = aiRecommendations.recommendations || aiRecommendations
+        if (Array.isArray(recommendations) && recommendations.length > 0) {
+          console.log('第一个推荐项:', recommendations[0])
+          console.log('第一个推荐项的skills类型:', typeof recommendations[0].skills)
+          console.log('第一个推荐项的skills值:', recommendations[0].skills)
+        }
       } catch (parseError) {
         console.error('JSON解析失败，使用备用方案')
+        console.error('解析错误详情:', parseError)
+        console.error('原始响应内容:', aiResponse)
         // 如果JSON解析失败，使用本地分析作为备用
         const localAnalysis = analyzeSkills(formData.skills)
         setSkillAnalysis(localAnalysis)
@@ -704,19 +717,39 @@ const SkillFinder: React.FC = () => {
       }
 
       // 格式化AI推荐结果
-      const formattedRecommendations = (aiRecommendations.recommendations || aiRecommendations).map((rec: any, index: number) => ({
-        id: `ai-rec-${index}`,
-        name: rec.name || rec.title || '未命名副业',
-        category: rec.category || 'AI推荐',
-        difficulty: rec.difficulty || '中',
-        timeRequired: rec.timeRequired || rec.time_required || '1-2小时/天',
-        monthlyIncome: rec.monthlyIncome || rec.monthly_income || '2000-4000元',
-        description: rec.description || rec.desc || 'AI推荐的优质副业方向',
-        skills: rec.required_skills || rec.skills || [],
-        platforms: rec.recommended_platforms || rec.platforms || ['小红书', '抖音', '闲鱼'],
-        tags: rec.tags || ['AI推荐', '个性化'],
-        matchScore: rec.matchScore || rec.match_score || Math.round(Math.random() * 20 + 80)
-      })) || []
+      const formattedRecommendations = (aiRecommendations.recommendations || aiRecommendations).map((rec: any, index: number) => {
+        // 确保skills是数组格式
+        let skills = rec.required_skills || rec.skills || []
+        if (typeof skills === 'string') {
+          skills = skills.split(/[,，\s]+/).filter(Boolean)
+        }
+        
+        // 确保platforms是数组格式
+        let platforms = rec.recommended_platforms || rec.platforms || ['小红书', '抖音', '闲鱼']
+        if (typeof platforms === 'string') {
+          platforms = platforms.split(/[,，\s]+/).filter(Boolean)
+        }
+        
+        // 确保tags是数组格式
+        let tags = rec.tags || ['AI推荐', '个性化']
+        if (typeof tags === 'string') {
+          tags = tags.split(/[,，\s]+/).filter(Boolean)
+        }
+        
+        return {
+          id: `ai-rec-${index}`,
+          name: rec.name || rec.title || '未命名副业',
+          category: rec.category || 'AI推荐',
+          difficulty: rec.difficulty || '中',
+          timeRequired: rec.timeRequired || rec.time_required || '1-2小时/天',
+          monthlyIncome: rec.monthlyIncome || rec.monthly_income || '2000-4000元',
+          description: rec.description || rec.desc || 'AI推荐的优质副业方向',
+          skills: skills,
+          platforms: platforms,
+          tags: tags,
+          matchScore: rec.matchScore || rec.match_score || Math.round(Math.random() * 20 + 80)
+        }
+      }) || []
 
       // 创建AI分析结果
       const aiAnalysis = {
