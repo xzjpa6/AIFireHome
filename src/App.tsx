@@ -526,12 +526,15 @@ const SkillFinder: React.FC = () => {
     setIsLoading(true)
     
     try {
+      const apiKey = (import.meta as any).env?.VITE_DEEPSEEK_API_KEY || 'sk-fe7a3c1bb1b742378ed8d0e2e0485712'
+      console.log('使用API密钥:', apiKey ? '已配置' : '未配置')
+      
       // 调用DeepSeek API进行技能分析
       const response = await fetch('/api/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(import.meta as any).env?.VITE_DEEPSEEK_API_KEY || 'sk-fe7a3c1bb1b742378ed8d0e2e0485712'}`
+          'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
           model: 'deepseek-chat',
@@ -551,10 +554,20 @@ const SkillFinder: React.FC = () => {
       })
 
       if (!response.ok) {
-        throw new Error('API调用失败')
+        console.error('API响应状态:', response.status, response.statusText)
+        throw new Error(`API调用失败: ${response.status} ${response.statusText}`)
       }
 
-      const data = await response.json()
+      const responseText = await response.text()
+      console.log('API响应文本:', responseText.substring(0, 200))
+      
+      let data
+      try {
+        data = JSON.parse(responseText)
+      } catch (parseError) {
+        console.error('JSON解析失败:', parseError)
+        throw new Error('API返回数据格式错误')
+      }
       const aiResponse = data.choices[0].message.content
       
       // 解析AI返回的JSON数据
