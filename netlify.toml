@@ -4,7 +4,6 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  VITE_DEEPSEEK_API_KEY = "sk-fe7a3c1bb1b742378ed8d0e2e0485712"
 
 # API代理配置 - 解决CORS问题
 [[redirects]]

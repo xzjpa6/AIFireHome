@@ -554,12 +554,30 @@ const SkillFinder: React.FC = () => {
       let responseText
       let data
       
-      // 尝试通过Netlify代理调用API
+      // 验证API密钥
+      if (!apiKey || apiKey.trim() === '') {
+        throw new Error('API密钥未配置，请在设置中配置DeepSeek API密钥')
+      }
+      
+      console.log('使用API密钥:', apiKey.substring(0, 8) + '...')
+      
+      // 调试请求详情
+      console.log('请求详情:')
+      console.log('URL:', '/api/chat/completions')
+      console.log('方法:', 'POST')
+      console.log('请求头:', {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey.substring(0, 8)}...`
+      })
+      console.log('请求体:', requestBody)
+      
+      // 直接调用DeepSeek API（通过Netlify重定向解决CORS）
       try {
         // 创建超时控制器
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 30000)
         
+        // 使用Netlify重定向到DeepSeek API
         response = await fetch('/api/chat/completions', {
           method: 'POST',
           headers: {
@@ -572,50 +590,36 @@ const SkillFinder: React.FC = () => {
         
         clearTimeout(timeoutId)
         
-        console.log('Netlify代理响应状态:', response.status, response.statusText)
+        console.log('DeepSeek API响应状态:', response.status, response.statusText)
         
         if (!response.ok) {
-          throw new Error(`Netlify代理调用失败: ${response.status} ${response.statusText}`)
+          console.error('API响应错误详情:')
+          console.error('状态码:', response.status)
+          console.error('状态文本:', response.statusText)
+          console.error('响应头:', Object.fromEntries(response.headers.entries()))
+          
+          // 尝试获取错误响应内容
+          try {
+            const errorText = await response.text()
+            console.error('错误响应内容:', errorText)
+          } catch (e) {
+            console.error('无法读取错误响应内容')
+          }
+          
+          throw new Error(`DeepSeek API调用失败: ${response.status} ${response.statusText}`)
         }
         
         responseText = await response.text()
-        console.log('Netlify代理响应文本长度:', responseText.length)
-        console.log('Netlify代理响应文本预览:', responseText.substring(0, 200))
+        console.log('DeepSeek API响应文本长度:', responseText.length)
+        console.log('DeepSeek API响应文本预览:', responseText.substring(0, 200))
         
-      } catch (proxyError: any) {
-        console.error('Netlify代理失败:', proxyError)
-        if (proxyError.name === 'AbortError') {
-          console.error('Netlify代理请求超时')
+      } catch (apiError: any) {
+        console.error('DeepSeek API调用失败:', apiError)
+        if (apiError.name === 'AbortError') {
+          console.error('请求超时')
           throw new Error('网络请求超时，请检查网络连接后重试')
         }
-        console.log('尝试直接调用DeepSeek API...')
-        
-        // 如果Netlify代理失败，直接调用DeepSeek API（需要处理CORS）
-        // 创建超时控制器
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 30000)
-        
-        response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
-          },
-          body: JSON.stringify(requestBody),
-          signal: controller.signal
-        })
-        
-        clearTimeout(timeoutId)
-        
-        console.log('直接API响应状态:', response.status, response.statusText)
-        
-        if (!response.ok) {
-          throw new Error(`直接API调用失败: ${response.status} ${response.statusText}`)
-        }
-        
-        responseText = await response.text()
-        console.log('直接API响应文本长度:', responseText.length)
-        console.log('直接API响应文本预览:', responseText.substring(0, 200))
+        throw apiError
       }
 
       // 检查响应是否为空
