@@ -556,14 +556,21 @@ const SkillFinder: React.FC = () => {
       
       // 尝试通过Netlify代理调用API
       try {
+        // 创建超时控制器
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 30000)
+        
         response = await fetch('/api/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${apiKey}`
           },
-          body: JSON.stringify(requestBody)
+          body: JSON.stringify(requestBody),
+          signal: controller.signal
         })
+        
+        clearTimeout(timeoutId)
         
         console.log('Netlify代理响应状态:', response.status, response.statusText)
         
@@ -573,20 +580,32 @@ const SkillFinder: React.FC = () => {
         
         responseText = await response.text()
         console.log('Netlify代理响应文本长度:', responseText.length)
+        console.log('Netlify代理响应文本预览:', responseText.substring(0, 200))
         
-      } catch (proxyError) {
+      } catch (proxyError: any) {
         console.error('Netlify代理失败:', proxyError)
+        if (proxyError.name === 'AbortError') {
+          console.error('Netlify代理请求超时')
+          throw new Error('网络请求超时，请检查网络连接后重试')
+        }
         console.log('尝试直接调用DeepSeek API...')
         
         // 如果Netlify代理失败，直接调用DeepSeek API（需要处理CORS）
+        // 创建超时控制器
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 30000)
+        
         response = await fetch('https://api.deepseek.com/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${apiKey}`
           },
-          body: JSON.stringify(requestBody)
+          body: JSON.stringify(requestBody),
+          signal: controller.signal
         })
+        
+        clearTimeout(timeoutId)
         
         console.log('直接API响应状态:', response.status, response.statusText)
         
@@ -596,6 +615,15 @@ const SkillFinder: React.FC = () => {
         
         responseText = await response.text()
         console.log('直接API响应文本长度:', responseText.length)
+        console.log('直接API响应文本预览:', responseText.substring(0, 200))
+      }
+
+      // 检查响应是否为空
+      if (!responseText || responseText.trim() === '') {
+        console.error('API返回空响应')
+        console.error('响应状态:', response.status, response.statusText)
+        console.error('响应头:', Object.fromEntries(response.headers.entries()))
+        throw new Error('API返回空响应，请稍后重试')
       }
 
       // 解析响应数据
@@ -603,8 +631,10 @@ const SkillFinder: React.FC = () => {
         data = JSON.parse(responseText)
       } catch (parseError) {
         console.error('JSON解析失败:', parseError)
+        console.error('原始响应文本长度:', responseText.length)
         console.error('原始响应文本前500字符:', responseText.substring(0, 500))
-        throw new Error('API返回数据格式错误')
+        console.error('原始响应文本后500字符:', responseText.slice(-500))
+        throw new Error(`API返回数据格式错误: ${(parseError as Error).message}`)
       }
       
       console.log('解析后的数据:', data)
@@ -675,9 +705,25 @@ const SkillFinder: React.FC = () => {
         source: 'deepseek-ai'
       }))
 
-    } catch (error) {
-      console.error('DeepSeek API调用失败:', error)
-      // API调用失败时，回退到本地分析
+    } catch (error: any) {
+        console.error('DeepSeek API调用失败:', error)
+        
+        // 特殊处理不同类型的错误
+        if (error.name === 'AbortError') {
+          console.error('请求超时')
+          alert('网络请求超时，请检查网络连接后重试')
+        } else if (error.message.includes('Failed to fetch')) {
+          console.error('网络连接失败')
+          alert('网络连接失败，请检查网络后重试')
+        } else if (error.message.includes('API返回空响应')) {
+          console.error('API返回空数据')
+          alert('服务器返回空数据，请稍后重试')
+        } else if (error.message.includes('API返回数据格式错误')) {
+          console.error('API数据格式错误')
+          alert('服务器返回数据格式错误，请稍后重试')
+        }
+        
+        // API调用失败时，回退到本地分析
       const localAnalysis = analyzeSkills(formData.skills)
       setSkillAnalysis(localAnalysis)
       setRecommendations(localAnalysis.potentialBusinesses)
