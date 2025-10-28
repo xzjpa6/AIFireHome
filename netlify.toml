@@ -5,12 +5,11 @@
 [build.environment]
   NODE_VERSION = "18"
 
-# API代理配置 - 解决CORS问题
+# API代理配置 - 使用Netlify Functions处理认证头
 [[redirects]]
   from = "/api/*"
-  to = "https://api.deepseek.com/v1/:splat"
+  to = "/.netlify/functions/:splat"
   status = 200
-  headers = {Access-Control-Allow-Origin = "*", Access-Control-Allow-Headers = "*"}
 
 # SPA路由配置
 [[redirects]]
