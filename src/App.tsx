@@ -528,46 +528,92 @@ const SkillFinder: React.FC = () => {
     try {
       const apiKey = (import.meta as any).env?.VITE_DEEPSEEK_API_KEY || 'sk-fe7a3c1bb1b742378ed8d0e2e0485712'
       console.log('使用API密钥:', apiKey ? '已配置' : '未配置')
+      console.log('表单数据:', formData)
       
-      // 调用DeepSeek API进行技能分析
-      const response = await fetch('/api/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: 'deepseek-chat',
-          messages: [
-            {
-              role: 'system',
-              content: '你是一个专业的副业规划师，擅长根据用户的技能、时间和努力程度，为用户推荐最适合的副业方向。请分析用户的技能，并推荐3-5个最适合的副业，每个副业需要包含：名称、难度、时间需求、月收入范围、详细描述、所需技能、推荐平台、标签、匹配度分数。请以JSON格式返回结果。'
-            },
-            {
-              role: 'user',
-              content: `我的技能：${formData.skills}，每天可用时间：${formData.availableTime}，可接受的辛苦程度：${formData.effortLevel}。请为我推荐最适合的副业方向。`
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 2000
+      // 准备请求数据
+      const requestBody = {
+        model: 'deepseek-chat',
+        messages: [
+          {
+            role: 'system',
+            content: '你是一个专业的副业规划师，擅长根据用户的技能、时间和努力程度，为用户推荐最适合的副业方向。请分析用户的技能，并推荐3-5个最适合的副业，每个副业需要包含：名称、难度、时间需求、月收入范围、详细描述、所需技能、推荐平台、标签、匹配度分数。请以JSON格式返回结果。'
+          },
+          {
+            role: 'user',
+            content: `我的技能：${formData.skills}，每天可用时间：${formData.availableTime}，可接受的辛苦程度：${formData.effortLevel}。请为我推荐最适合的副业方向。`
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 2000
+      }
+      
+      console.log('请求URL:', '/api/chat/completions')
+      console.log('请求体:', requestBody)
+      
+      let response
+      let responseText
+      let data
+      
+      // 尝试通过Netlify代理调用API
+      try {
+        response = await fetch('/api/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify(requestBody)
         })
-      })
-
-      if (!response.ok) {
-        console.error('API响应状态:', response.status, response.statusText)
-        throw new Error(`API调用失败: ${response.status} ${response.statusText}`)
+        
+        console.log('Netlify代理响应状态:', response.status, response.statusText)
+        
+        if (!response.ok) {
+          throw new Error(`Netlify代理调用失败: ${response.status} ${response.statusText}`)
+        }
+        
+        responseText = await response.text()
+        console.log('Netlify代理响应文本长度:', responseText.length)
+        
+      } catch (proxyError) {
+        console.error('Netlify代理失败:', proxyError)
+        console.log('尝试直接调用DeepSeek API...')
+        
+        // 如果Netlify代理失败，直接调用DeepSeek API（需要处理CORS）
+        response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify(requestBody)
+        })
+        
+        console.log('直接API响应状态:', response.status, response.statusText)
+        
+        if (!response.ok) {
+          throw new Error(`直接API调用失败: ${response.status} ${response.statusText}`)
+        }
+        
+        responseText = await response.text()
+        console.log('直接API响应文本长度:', responseText.length)
       }
 
-      const responseText = await response.text()
-      console.log('API响应文本:', responseText.substring(0, 200))
-      
-      let data
+      // 解析响应数据
       try {
         data = JSON.parse(responseText)
       } catch (parseError) {
         console.error('JSON解析失败:', parseError)
+        console.error('原始响应文本前500字符:', responseText.substring(0, 500))
         throw new Error('API返回数据格式错误')
       }
+      
+      console.log('解析后的数据:', data)
+      
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        console.error('响应数据结构异常:', data)
+        throw new Error('API返回数据格式异常')
+      }
+      
       const aiResponse = data.choices[0].message.content
       
       // 解析AI返回的JSON数据
