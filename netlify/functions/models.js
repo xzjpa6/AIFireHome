@@ -1,9 +1,9 @@
-// Netlify Function for testing DeepSeek API key validity
+// Netlify Function for testing DeepSeek API key validity (using server env)
 exports.handler = async (event, context) => {
   // 设置CORS头
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Content-Type': 'application/json'
   }
@@ -26,15 +26,15 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const authHeader = event.headers.authorization || event.headers.Authorization
-    
-    console.log('测试API密钥:', authHeader ? authHeader.substring(0, 20) + '...' : '无')
+    const apiKey = process.env.DEEPSEEK_API_KEY
 
-    if (!authHeader) {
+    console.log('服务端密钥检测: ', apiKey ? '已配置' : '未配置')
+
+    if (!apiKey) {
       return {
-        statusCode: 401,
+        statusCode: 500,
         headers,
-        body: JSON.stringify({ error: '缺少认证头' })
+        body: JSON.stringify({ error: '服务器未配置 DEEPSEEK_API_KEY 环境变量' })
       }
     }
 
@@ -42,7 +42,7 @@ exports.handler = async (event, context) => {
     const response = await fetch('https://api.deepseek.com/v1/models', {
       method: 'GET',
       headers: {
-        'Authorization': authHeader
+        'Authorization': `Bearer ${apiKey}`
       }
     })
 

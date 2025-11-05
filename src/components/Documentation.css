@@ -1,0 +1,450 @@
+/* 文档展示组件样式 */
+
+.documentation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.documentation-modal {
+  background: var(--apple-background);
+  border-radius: 20px;
+  width: 90vw;
+  max-width: 900px;
+  height: 85vh;
+  max-height: 800px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--apple-border);
+  overflow: hidden;
+}
+
+.documentation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--apple-border);
+  background: linear-gradient(135deg, var(--apple-blue) 0%, var(--apple-green) 100%);
+  color: white;
+}
+
+.documentation-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.documentation-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+  line-height: 1.6;
+}
+
+.doc-section {
+  margin-bottom: 48px;
+}
+
+.doc-section h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--apple-text-primary);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.doc-section h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--apple-blue);
+  margin-bottom: 24px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--apple-blue);
+}
+
+.doc-section h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--apple-text-primary);
+  margin-bottom: 16px;
+}
+
+.doc-section h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--apple-text-secondary);
+  margin-bottom: 12px;
+}
+
+.doc-description {
+  font-size: 18px;
+  color: var(--apple-text-secondary);
+  text-align: center;
+  margin-bottom: 32px;
+  line-height: 1.7;
+}
+
+/* 功能特性网格 */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.feature-item {
+  background: var(--apple-card-background);
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid var(--apple-border);
+  transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+}
+
+.feature-item h4 {
+  color: var(--apple-blue);
+  margin-bottom: 12px;
+}
+
+.feature-item p {
+  color: var(--apple-text-secondary);
+  margin: 0;
+}
+
+/* 代码块样式 */
+.code-block {
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 24px 0;
+  overflow-x: auto;
+  border: 1px solid #333;
+}
+
+.code-block pre {
+  margin: 0;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.code-block code {
+  color: #e6e6e6;
+  background: none;
+  padding: 0;
+}
+
+/* 文件树样式 */
+.file-tree {
+  background: var(--apple-card-background);
+  border-radius: 12px;
+  padding: 24px;
+  margin: 24px 0;
+  border: 1px solid var(--apple-border);
+}
+
+.tree-item {
+  font-family: 'SF Mono', Monaco, monospace;
+  font-size: 14px;
+  color: var(--apple-text-primary);
+  margin: 8px 0;
+}
+
+.indent-1 {
+  margin-left: 24px;
+}
+
+/* 技术栈标签 */
+.tech-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.tech-category h4 {
+  color: var(--apple-blue);
+  margin-bottom: 12px;
+}
+
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tech-tag {
+  background: var(--apple-blue);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.tech-tag:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+}
+
+/* 颜色调色板 */
+.color-palette {
+  margin-top: 24px;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.color-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--apple-card-background);
+  border-radius: 12px;
+  border: 1px solid var(--apple-border);
+}
+
+.color-preview {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 2px solid var(--apple-border);
+}
+
+.color-preview.apple-blue {
+  background: var(--apple-blue);
+}
+
+.color-preview.apple-green {
+  background: var(--apple-green);
+}
+
+.color-preview.apple-orange {
+  background: var(--apple-orange);
+}
+
+.color-preview.apple-red {
+  background: var(--apple-red);
+}
+
+.color-item span {
+  font-family: 'SF Mono', Monaco, monospace;
+  font-size: 14px;
+  color: var(--apple-text-secondary);
+}
+
+/* 开发规范 */
+.development-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.rule-item {
+  background: var(--apple-card-background);
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid var(--apple-border);
+}
+
+.rule-item h4 {
+  color: var(--apple-blue);
+  margin-bottom: 12px;
+}
+
+.rule-item p {
+  color: var(--apple-text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* 许可证链接 */
+.license-link {
+  color: var(--apple-blue);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.license-link:hover {
+  text-decoration: underline;
+  color: var(--apple-green);
+}
+
+/* 列表样式 */
+.doc-section ul,
+.doc-section ol {
+  margin: 16px 0;
+  padding-left: 24px;
+}
+
+.doc-section li {
+  margin: 8px 0;
+  color: var(--apple-text-secondary);
+}
+
+.doc-section p {
+  color: var(--apple-text-secondary);
+  margin: 16px 0;
+  line-height: 1.7;
+}
+
+/* 深色模式适配 */
+body.dark-mode .documentation-modal {
+  background: var(--apple-dark-background);
+  color: var(--apple-text-primary);
+}
+
+body.dark-mode .documentation-header {
+  background: linear-gradient(135deg, var(--apple-blue) 0%, var(--apple-green) 100%);
+}
+
+body.dark-mode .feature-item,
+body.dark-mode .file-tree,
+body.dark-mode .rule-item,
+body.dark-mode .color-item {
+  background: var(--apple-dark-card);
+  border-color: var(--apple-dark-border);
+}
+
+body.dark-mode .code-block {
+  background: #2d2d2d;
+  border-color: #444;
+}
+
+body.dark-mode .code-block code {
+  color: #f8f8f2;
+}
+
+/* 滚动条样式 */
+.documentation-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.documentation-content::-webkit-scrollbar-track {
+  background: var(--apple-background);
+  border-radius: 4px;
+}
+
+.documentation-content::-webkit-scrollbar-thumb {
+  background: var(--apple-blue);
+  border-radius: 4px;
+}
+
+.documentation-content::-webkit-scrollbar-thumb:hover {
+  background: var(--apple-green);
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .documentation-modal {
+    width: 95vw;
+    height: 90vh;
+    margin: 20px;
+    border-radius: 16px;
+  }
+  
+  .documentation-header {
+    padding: 20px 24px;
+  }
+  
+  .documentation-content {
+    padding: 24px 20px;
+  }
+  
+  .doc-section h1 {
+    font-size: 28px;
+  }
+  
+  .doc-section h2 {
+    font-size: 24px;
+  }
+  
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .color-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tech-tags {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .documentation-modal {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .documentation-header {
+    padding: 16px 20px;
+  }
+  
+  .documentation-content {
+    padding: 20px 16px;
+  }
+  
+  .doc-section h1 {
+    font-size: 24px;
+  }
+  
+  .doc-section h2 {
+    font-size: 20px;
+  }
+}

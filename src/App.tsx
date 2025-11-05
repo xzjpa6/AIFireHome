@@ -1,6 +1,18 @@
-import React, { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom'
+import { AuthProvider } from './contexts/AuthContext'
+import Navigation from './components/Navigation'
+import LoginModal from './components/LoginModal'
+import RegisterModal from './components/RegisterModal'
 import Skeleton from './components/Skeleton'
+import './glassmorphism.css'
+import './apple.css'
+import AppleHero from './components/AppleHero'
+import AppleButton from './components/AppleButton'
+import CopyWeChatButton from './components/CopyWeChatButton'
+
+// 全局微信号配置（用于 WeChatCommunity 及潜在引用）
+const WECHAT_ID = (import.meta as any).env?.VITE_WECHAT_ID || 'AIPMAndy'
 
 // 定义接口类型
 interface FormDataType {
@@ -10,20 +22,6 @@ interface FormDataType {
 }
 
 
-
-interface RiskInfoType {
-  level: 'low' | 'medium' | 'high'
-  levelText: string
-  warnings: string[]
-  suggestions: string[]
-  estimatedTime?: string
-  investment?: string
-  riskFactors?: Array<{
-    factor: string
-    level: string
-    description: string
-  }>
-}
 
 interface PlanDayType {
   day: number
@@ -42,239 +40,236 @@ interface BusinessPlanType {
   days: PlanDayType[]
 }
 
-interface PlatformType {
-  name: string
-  type: string
-  friendly: number
-  cycle: string
-  url: string
-  difficulty?: string
-  userCount?: string
-  description?: string
-  categories?: string[]
-  monetization?: string[]
-}
+// 登录模态框组件（LegacyLoginModal 已移除，统一使用 AuthContext 控制 LoginModal/RegisterModal）
 
-// 首页组件
-const HomePage: React.FC = () => {
+// 抱团互助组件 - 玻璃拟态风格
+const WeChatCommunity: React.FC = () => {
+  const WECHAT_ID = (import.meta as any).env?.VITE_WECHAT_ID || 'AIPMAndy'
+
   return (
-    <div>
-      {/* 导航栏 */}
-      <nav className="nav">
-        <div className="container">
-          <div className="nav-container">
-            <Link to="/" className="nav-logo">
-              AI_FIRE_Home
-            </Link>
-            <div className="nav-links">
-              <Link to="/skill-finder" className="nav-link">技能挖掘机</Link>
-              <Link to="/business-planner" className="nav-link">副业拆解器</Link>
-              <Link to="/risk-alert" className="nav-link">避坑雷达</Link>
-              <Link to="/community" className="nav-link">小圈互助</Link>
-            </div>
-            <button className="btn-primary">开始赚钱</button>
-          </div>
-        </div>
-      </nav>
+    <div className="wechat-community min-h-screen">
+      <Navigation />
+      {/* Hero Section - Apple style */}
+      <AppleHero 
+        title={
+          <>
+            加入社群
+          </>
+        }
+        subtitle={
+          <>
+            大家一起搞副业，分享经验、互相支持、共同成长
+          </>
+        }
+      >
+        <CopyWeChatButton variant="primary">
+          立即加入
+        </CopyWeChatButton>
+      </AppleHero>
 
-      {/* 英雄区域 */}
-      <section className="hero">
+      {/* Benefits Section */}
+      <section className="apple-section">
         <div className="container">
-          <div className="hero-content">
-            <h1 className="hero-title">
-              用AI解决副业三大痛点
-            </h1>
-            <p className="hero-subtitle">
-              不知道做什么？不会做？怕踩坑？AI_FIRE_Home帮你快速启动副业，轻松赚第一桶金
-            </p>
-            <div className="flex flex-col md:flex-row justify-center gap-4">
-              <button className="btn-primary text-lg py-3 px-8">
-                立即开始
-              </button>
-              <Link to="/skill-finder" className="btn-outline text-lg py-3 px-8">
-                技能挖掘
-              </Link>
+          <div className="text-center mb-12">
+            <h2 className="section-title">群优势</h2>
+              <p className="section-subtitle">为什么选择我们的副业互助群</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="apple-feature-card">
+              <h3 className="text-xl font-bold mb-2">上千位副业伙伴</h3>
+              <p className="text-text-light text-sm">汇聚各行各业副业达人，经验分享、资源对接</p>
+            </div>
+            <div className="apple-feature-card">
+              <h3 className="text-xl font-bold mb-2">每日实战分享</h3>
+              <p className="text-text-light text-sm">真实副业案例分享，避免踩坑，快速上手</p>
+            </div>
+            <div className="apple-feature-card">
+              <h3 className="text-xl font-bold mb-2">AI工具使用技巧</h3>
+              <p className="text-text-light text-sm">最新AI工具使用教程，提升副业效率</p>
+            </div>
+            <div className="apple-feature-card">
+              <h3 className="text-xl font-bold mb-2">专属导师答疑</h3>
+              <p className="text-text-light text-sm">专业导师定期答疑，解决副业难题</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 核心优势 */}
-      <section className="features">
+      {/* Join Steps */}
+      {false && <section className="apple-section">
         <div className="container">
-          <h2 className="section-title">四大核心功能</h2>
-          <p className="section-subtitle">AI驱动的副业生态系统，从技能挖掘到变现全流程支持</p>
-          <div className="feature-grid">
-            {/* 功能卡片 1 */}
-            <div className="feature-card fade-in">
-              <div className="feature-icon">
-                <span>🔍</span>
+          <div className="text-center mb-12">
+            <h2 className="section-title">加入步骤</h2>
+            <p className="section-subtitle">简单三步，快速入群</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div className="apple-card text-center p-8">
+              <div className="w-12 h-12 bg-primary-color/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-primary-color text-xl font-bold">1</span>
               </div>
-              <h3 className="feature-title">AI 技能挖掘机</h3>
+              <h3 className="text-xl font-bold mb-2">复制微信号</h3>
+              <p className="text-text-light">点击下方按钮复制微信号 {WECHAT_ID}</p>
+            </div>
+            <div className="apple-card text-center p-8">
+              <div className="w-12 h-12 bg-primary-color/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-primary-color text-xl font-bold">2</span>
+              </div>
+              <h3 className="text-xl font-bold mb-2">添加好友</h3>
+              <p className="text-text-light">在微信中添加好友，备注"副业互助"</p>
+            </div>
+            <div className="apple-card text-center p-8">
+              <div className="w-12 h-12 bg-primary-color/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-primary-color text-xl font-bold">3</span>
+              </div>
+              <h3 className="text-xl font-bold mb-2">等待审核</h3>
+              <p className="text-text-light">管理员审核通过后即可入群</p>
+            </div>
+          </div>
+          <div className="text-center">
+            <CopyWeChatButton variant="primary">
+              复制微信号 {WECHAT_ID}
+            </CopyWeChatButton>
+          </div>
+        </div>
+      </section>}
+    </div>
+  )
+}
+
+// 首页组件
+const HomePage: React.FC = () => {
+
+  return (
+    <>
+      <Navigation />
+
+      <AppleHero 
+        title={<>用AI搞副业，一个就够了</>}
+        subtitle={<>我们提供从技能挖掘、副业规划到实战交流的全链路支持，<br />助你轻松开启属于自己的第二事业。</>}
+      >
+        <AppleButton to="/skill-finder" variant="primary" className="mr-4">开始探索</AppleButton>
+        <AppleButton to="/community" variant="secondary">加入社群</AppleButton>
+      </AppleHero>
+
+      {/* 核心优势 */}
+      <section className="apple-section">
+        <div className="apple-container">
+          <h2 className="apple-section-header">核心功能</h2>
+          <div className="apple-grid apple-grid-4">
+            {/* 功能卡片 1 */}
+            <div className="apple-feature-card fade-in">
+              <h3 className="feature-title">技能挖掘</h3>
               <p className="feature-description">
-                1分钟问卷，找到你的隐藏变现技能，匹配最适合的副业方向
+                用AI帮你找到你的隐藏变现技能，匹配最适合的副业方向
               </p>
-              <Link to="/skill-finder" className="btn-primary mt-4">
+              <AppleButton to="/skill-finder" className="mt-4" variant="primary">
                 开始挖掘 →
-              </Link>
+              </AppleButton>
             </div>
 
             {/* 功能卡片 2 */}
-            <div className="feature-card fade-in">
-              <div className="feature-icon">
-                <span>📝</span>
-              </div>
-              <h3 className="feature-title">副业拆解器</h3>
+            <div className="apple-feature-card fade-in">
+              <h3 className="feature-title">副业拆解</h3>
               <p className="feature-description">
-                将复杂副业拆解为3步行动计划，每天小任务，7天见效
+                将复杂副业拆解为3步行动计划，每天做一点，7天见效
               </p>
-              <Link to="/business-planner" className="btn-primary mt-4">
+              <AppleButton to="/business-planner" className="mt-4" variant="primary">
                 查看拆解 →
-              </Link>
+              </AppleButton>
             </div>
 
-            {/* 功能卡片 3 */}
-            <div className="feature-card fade-in">
-              <div className="feature-icon">
-                <span>⚠️</span>
-              </div>
-              <h3 className="feature-title">实时避坑雷达</h3>
-              <p className="feature-description">
-                1秒识别副业风险，对接100+正规平台，安全副业不踩坑
-              </p>
-              <Link to="/risk-alert" className="btn-primary mt-4">
-                检查风险 →
-              </Link>
-            </div>
+            
 
-            {/* 功能卡片 4 */}
-            <div className="feature-card fade-in">
-              <div className="feature-icon">
-                <span>👥</span>
-              </div>
-              <h3 className="feature-title">小圈互助</h3>
+            {/* 功能卡片 3 - 抱团互助 */}
+            <div className="apple-feature-card fade-in" id="community">
+              <h3 className="feature-title">抱团互助</h3>
               <p className="feature-description">
-                5人小组互助成长，每天1个小任务，实战经验分享
+                大家一起搞副业，分享经验、互相支持、共同成长
               </p>
-              <Link to="/community" className="btn-primary mt-4">
-                加入小组 →
-              </Link>
+              <CopyWeChatButton className="mt-4">
+                立即加入 →
+              </CopyWeChatButton>
             </div>
           </div>
         </div>
       </section>
 
       {/* 成功案例 */}
-      <section className="section">
-        <div className="container">
-          <h2 className="section-title">成功案例</h2>
-          <p className="section-subtitle">看看他们如何通过AI_FIRE_Home实现副业变现</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <section className="apple-section">
+        <div className="apple-container">
+          <h2 className="apple-section-header">成功案例</h2>
+          <div className="apple-grid apple-grid-3">
             {/* 案例1 */}
-            <div className="card slide-in-left">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                  <span className="text-primary-color">👩</span>
-                </div>
-                <div className="ml-3">
-                  <h4 className="font-bold">张女士</h4>
-                  <p className="text-sm text-text-light">家庭主妇</p>
-                </div>
+            <div className="apple-card fade-in">
+              <div className="mb-4">
+                <h4 className="font-bold">张女士</h4>
+                <p className="text-sm text-text-light">产品经理</p>
               </div>
-              <p className="mb-4">"通过AI技能挖掘，发现自己擅长收纳整理，现在做线上收纳咨询，每月增收3000元！"</p>
-              <div className="tag tag-primary">
-                🔧 线上收纳咨询
-              </div>
+              <p className="mb-4">"通过AI技能挖掘，发现自己擅长做产品讲解，现在做产品求职咨询，每月增收30000元！"</p>
             </div>
 
             {/* 案例2 */}
-            <div className="card slide-in-left">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                  <span className="text-primary-color">👨</span>
-                </div>
-                <div className="ml-3">
-                  <h4 className="font-bold">李先生</h4>
-                  <p className="text-sm text-text-light">办公室职员</p>
-                </div>
+            <div className="apple-card fade-in">
+              <div className="mb-4">
+                <h4 className="font-bold">李先生</h4>
+                <p className="text-sm text-text-light">办公室职员</p>
               </div>
               <p className="mb-4">"Excel技能变现，帮小企业做报表，每周只需花几小时，月入2000+，太香了！"</p>
-              <div className="tag tag-primary">
-                📊 Excel数据处理
-              </div>
             </div>
 
             {/* 案例3 */}
-            <div className="card slide-in-left">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                  <span className="text-primary-color">🧑</span>
-                </div>
-                <div className="ml-3">
-                  <h4 className="font-bold">王先生</h4>
-                  <p className="text-sm text-text-light">宝妈</p>
-                </div>
+            <div className="apple-card fade-in">
+              <div className="mb-4">
+                <h4 className="font-bold">王女士</h4>
+                <p className="text-sm text-text-light">宝妈</p>
               </div>
               <p className="mb-4">"做母婴用品测评，发小红书拿佣金，既能照顾孩子又能赚钱，实现双赢！"</p>
-              <div className="tag tag-primary">
-                📱 母婴测评博主
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 底部CTA */}
-      <section className="section bg-gradient-to-r from-primary-color to-primary-hover">
-        <div className="container text-center">
-          <h2 className="section-title text-white">开始你的副业之旅</h2>
-          <p className="section-subtitle text-white opacity-90">每天只需30分钟，快速赚到第一笔50元</p>
-          <Link to="/skill-finder" className="btn-secondary text-lg py-3 px-8">
-            免费开始测评
-          </Link>
-        </div>
-      </section>
 
       {/* 页脚 */}
-      <footer className="footer">
+      <footer className="glass-footer">
         <div className="container">
           <div className="footer-content">
             <div>
-              <h3 className="footer-title">AI_FIRE_Home</h3>
+              <h3 className="footer-title">AIFireHome</h3>
               <p className="mb-4">用AI技术解决副业痛点，让每个人都能轻松开启副业之旅</p>
             </div>
             <div>
               <h3 className="footer-title">产品功能</h3>
-              <Link to="/skill-finder" className="footer-link">AI技能挖掘机</Link>
-              <Link to="/business-planner" className="footer-link">副业拆解器</Link>
-              <Link to="/risk-alert" className="footer-link">实时避坑雷达</Link>
-              <Link to="/community" className="footer-link">小圈互助</Link>
+              <Link to="/skill-finder" className="footer-link">技能挖掘</Link>
+            <Link to="/business-planner" className="footer-link">副业拆解</Link>
+            
+            <a href="#community" className="footer-link" onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('community')?.scrollIntoView({ behavior: 'smooth' });
+            }}>抱团互助</a>
+
             </div>
             <div>
               <h3 className="footer-title">资源中心</h3>
-              <a href="#" className="footer-link">副业指南</a>
-              <a href="#" className="footer-link">成功案例</a>
               <a href="#" className="footer-link">常见问题</a>
               <a href="#" className="footer-link">联系我们</a>
             </div>
             <div>
               <h3 className="footer-title">关于我们</h3>
-              <a href="#" className="footer-link">公司介绍</a>
-              <a href="#" className="footer-link">加入我们</a>
               <a href="#" className="footer-link">隐私政策</a>
               <a href="#" className="footer-link">服务条款</a>
             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; 2023 AI_FIRE_Home. All rights reserved.</p>
+            <p>&copy; 2023 AIFireHome. All rights reserved.</p>
           </div>
         </div>
       </footer>
-    </div>
+    </>
   )
 }
 
-// AI技能挖掘机组件
+// 技能挖掘组件
 const SkillFinder: React.FC = () => {
   const [formData, setFormData] = useState<FormDataType>({
     skills: '',
@@ -526,8 +521,6 @@ const SkillFinder: React.FC = () => {
     setIsLoading(true)
     
     try {
-      const apiKey = (import.meta as any).env?.VITE_DEEPSEEK_API_KEY || 'sk-fe7a3c1bb1b742378ed8d0e2e0485712'
-      console.log('使用API密钥:', apiKey ? '已配置' : '未配置')
       console.log('表单数据:', formData)
       
       // 准备请求数据
@@ -554,53 +547,15 @@ const SkillFinder: React.FC = () => {
       let responseText
       let data
       
-      // 验证API密钥
-      if (!apiKey || apiKey.trim() === '') {
-        throw new Error('API密钥未配置，请在设置中配置DeepSeek API密钥')
-      }
+      // 使用 Netlify Functions 代理（服务端读取密钥）
       
-      console.log('使用API密钥:', apiKey.substring(0, 8) + '...')
-      
-      // 使用Netlify Function代理，而不是直接重定向
-      console.log('使用Netlify Function代理模式')
-      
-      // 先测试API密钥有效性
-      console.log('正在测试API密钥有效性...')
-      try {
-        const testResponse = await fetch('/api/models', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${apiKey}`
-          }
-        })
-        
-        const testData = await testResponse.json()
-        console.log('API密钥测试结果:', {
-          status: testResponse.status,
-          data: testData
-        })
-        
-        if (!testResponse.ok) {
-          throw new Error(`API密钥测试失败: ${testData.error || '未知错误'}`)
-        }
-        
-        console.log('✅ API密钥有效，可用模型:', testData.models)
-      } catch (testError: any) {
-        console.error('❌ API密钥测试错误:', testError)
-        if (testError.message.includes('API密钥测试失败')) {
-          throw testError
-        }
-        console.log('继续尝试主要请求...')
-      }
+      console.log('使用 Netlify Functions 代理模式（服务端密钥）')
       
       // 调试请求详情
       console.log('请求详情:')
-      console.log('URL:', '/.netlify/functions/chat-completions')
+      console.log('URL:', '/api/chat/completions')
       console.log('方法:', 'POST')
-      console.log('请求头:', {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey.substring(0, 8)}...`
-      })
+      console.log('请求头:', { 'Content-Type': 'application/json' })
       console.log('请求体:', requestBody)
       
       // 直接调用DeepSeek API（通过Netlify重定向解决CORS）
@@ -609,12 +564,11 @@ const SkillFinder: React.FC = () => {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 30000)
         
-        // 使用Netlify Function代理
-        response = await fetch('/.netlify/functions/chat-completions', {
+        // 使用 Netlify Functions 代理
+        response = await fetch('/api/chat/completions', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(requestBody),
           signal: controller.signal
@@ -817,49 +771,17 @@ const SkillFinder: React.FC = () => {
 
   return (
     <div className="fade-in">
-      <nav className="nav">
-        <div className="container">
-          <div className="nav-container">
-            <Link to="/" className="nav-logo">
-              AI_FIRE_Home
-            </Link>
-            <div className="nav-links">
-              <Link to="/skill-finder" className="nav-link active">技能挖掘机</Link>
-              <Link to="/business-planner" className="nav-link">副业拆解器</Link>
-              <Link to="/risk-alert" className="nav-link">避坑雷达</Link>
-              <Link to="/community" className="nav-link">小圈互助</Link>
-            </div>
-            <button className="btn-primary">开始赚钱</button>
-          </div>
-        </div>
-      </nav>
-
-      <section className="section">
+      <Navigation />
+      <section className="apple-section">
         <div className="container">
           <div className="text-center mb-8">
-            <h1 className="section-title">AI 技能挖掘机</h1>
             <p className="section-subtitle">
               1分钟填写问卷，AI帮你找到隐藏的变现技能，匹配最适合你的副业方向
             </p>
           </div>
-
-          {/* 进度指示器 */}
-          <div className="flex justify-center mb-8">
-            <div className="flex items-center">
-              {[1, 2, 3].map((step) => (
-                <React.Fragment key={step}>
-                  <div className={`step-indicator ${currentStep >= step ? 'active' : ''}`}>
-                    {step}
-                  </div>
-                  {step < 3 && <div className={`step-line ${currentStep > step ? 'active' : ''}`}></div>}
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* 表单部分 */}
-            <div className={`card slide-in-left ${isLoading ? 'loading' : ''}`}>
+            <div className={`apple-card fade-in ${isLoading ? 'loading' : ''}`}>
               <div className="card-header">
                 <h2 className="card-title">请填写以下信息</h2>
                 <p className="card-subtitle">我们将根据你的回答，为你推荐最适合的副业方向</p>
@@ -909,7 +831,6 @@ const SkillFinder: React.FC = () => {
                     </div>
                   )}
                 </div>
-
                 <div className={`form-group ${currentStep >= 3 ? 'fade-in' : ''}`}>
                   <label className="form-label">
                     <span className="step-number">3</span>
@@ -934,19 +855,19 @@ const SkillFinder: React.FC = () => {
                   )}
                 </div>
 
-                <button type="submit" className="btn-primary w-full mt-4" disabled={isLoading || !formData.skills || !formData.availableTime || !formData.effortLevel}>
+                <AppleButton type="submit" className="w-full mt-4" variant="primary" disabled={isLoading || !formData.skills || !formData.availableTime || !formData.effortLevel}>
                   {isLoading ? (
                     <span className="flex items-center justify-center">
                       <div className="spinner mr-2"></div>
                       DeepSeek AI正在分析你的技能...
                     </span>
                   ) : '立即挖掘技能'}
-                </button>
+                </AppleButton>
               </form>
             </div>
 
             {/* 推荐结果 */}
-            <div className={`card slide-in-right ${showResults ? 'show' : ''}`}>
+            <div className={`apple-card fade-in ${showResults ? 'show' : ''}`}>
               <div className="card-header">
                 <div className="flex items-center justify-between">
                   <div>
@@ -1052,23 +973,15 @@ const SkillFinder: React.FC = () => {
                         >
                           查看详细拆解 →
                         </button>
-                        <button 
-                          className="btn-text text-sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            window.location.href = '/risk-alert'
-                          }}
-                        >
-                          评估风险
-                        </button>
+                        
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">🔍</div>
-                  <h3 className="text-xl font-bold mb-2">填写问卷获取推荐</h3>
+                <div className="text-center py-4">
+                  <div className="text-6xl mb-2">🔍</div>
+                  <h3 className="text-xl font-bold mb-1">填写问卷获取推荐</h3>
                   <p className="text-text-secondary">填写问卷并提交，获取专属副业推荐</p>
                 </div>
               )}
@@ -1080,7 +993,7 @@ const SkillFinder: React.FC = () => {
   )
 }
 
-// 副业拆解器组件
+// 副业拆解组件
 const BusinessPlanner: React.FC = () => {
 
   
@@ -3420,45 +3333,14 @@ const BusinessPlanner: React.FC = () => {
 
   return (
     <div className="fade-in">
-      <nav className="nav">
-        <div className="container">
-          <div className="nav-container">
-            <Link to="/" className="nav-logo">
-              AI_FIRE_Home
-            </Link>
-            <div className="nav-links">
-              <Link to="/skill-finder" className="nav-link">技能挖掘机</Link>
-              <Link to="/business-planner" className="nav-link active">副业拆解器</Link>
-              <Link to="/risk-alert" className="nav-link">避坑雷达</Link>
-              <Link to="/community" className="nav-link">小圈互助</Link>
-            </div>
-            <button className="btn-primary">开始赚钱</button>
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       <section className="section">
         <div className="container">
           <div className="text-center mb-8">
-            <h1 className="section-title">AI 副业拆解器</h1>
             <p className="section-subtitle">
-              选择感兴趣的副业，AI为你生成详细的7天启动计划，从零开始一步步教你赚钱
+              选择感兴趣的副业，AI为你生成详细的7天启动计划一步步教你赚钱
             </p>
-            <button 
-              className="clear-data-button" 
-              onClick={() => {
-                if (window.confirm('确定要清除所有数据吗？这将重置您的选择和进度。')) {
-                  clearLocalStorage()
-                  setSelectedBusiness('')
-                  setPlan(null as any)
-                  setCurrentDay(1)
-                  setExpandedDay(null)
-                  setCompletedDays([])
-                }
-              }}
-            >
-              清除数据
-            </button>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -3708,1181 +3590,8 @@ const BusinessPlanner: React.FC = () => {
   )
 }
 
-// 实时避坑雷达组件
-const RiskAlert: React.FC = () => {
-  const [selectedPlatform, setSelectedPlatform] = useState<string>('')
-  const [riskInfo, setRiskInfo] = useState<RiskInfoType | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [expandedPlatform, setExpandedPlatform] = useState<string | null>(null)
 
-  const platforms: PlatformType[] = [
-    { 
-      name: '小红书', 
-      type: '内容平台', 
-      friendly: 9, 
-      cycle: '周结', 
-      url: 'https://www.xiaohongshu.com',
-      userCount: '2亿+',
-      categories: ['生活方式', '美妆', '美食', '旅行'],
-      difficulty: '低',
-      monetization: ['广告合作', '商品推广', '知识付费'],
-      description: '以图文分享为主的生活方式社区，女性用户占比高'
-    },
-    { 
-      name: '抖音', 
-      type: '短视频平台', 
-      friendly: 8, 
-      cycle: '月结', 
-      url: 'https://www.douyin.com',
-      userCount: '7亿+',
-      categories: ['短视频', '直播', '音乐', '娱乐'],
-      difficulty: '中',
-      monetization: ['直播带货', '广告植入', '流量分成'],
-      description: '日活用户超7亿的短视频平台，流量巨大但竞争激烈'
-    },
-    { 
-      name: '闲鱼', 
-      type: '二手交易平台', 
-      friendly: 9, 
-      cycle: '即时', 
-      url: 'https://www.xianyu.com',
-      userCount: '5亿+',
-      categories: ['二手商品', '闲置交易', '技能服务', '定制商品'],
-      difficulty: '低',
-      monetization: ['商品销售', '技能服务', '定制服务'],
-      description: '阿里巴巴旗下二手交易平台，适合新手入门'
-    },
-    { 
-      name: '知乎', 
-      type: '知识问答平台', 
-      friendly: 7, 
-      cycle: '月结', 
-      url: 'https://www.zhihu.com',
-      userCount: '1亿+',
-      categories: ['问答', '知识', '专栏', '想法'],
-      difficulty: '中',
-      monetization: ['付费咨询', '知识付费', '品牌合作'],
-      description: '高质量问答社区，适合知识分享和专业领域创作者'
-    },
-    { 
-      name: 'B站', 
-      type: '视频平台', 
-      friendly: 8, 
-      cycle: '月结', 
-      url: 'https://www.bilibili.com',
-      userCount: '2.5亿+',
-      categories: ['视频', '游戏', '学习', '动漫'],
-      difficulty: '中',
-      monetization: ['创作激励', '充电打赏', '广告合作'],
-      description: '以中长视频为主的年轻人社区，内容质量要求高'
-    },
-    { 
-      name: '猪八戒网', 
-      type: '技能外包平台', 
-      friendly: 6, 
-      cycle: '项目结', 
-      url: 'https://www.zbj.com',
-      userCount: '3000万+',
-      categories: ['设计', '开发', '文案', '营销'],
-      difficulty: '高',
-      monetization: ['项目接单', '服务销售', '长期合作'],
-      description: '国内领先的技能外包平台，但抽成较高，竞争激烈'
-    },
-    { 
-      name: '淘宝', 
-      type: '电商平台', 
-      friendly: 7, 
-      cycle: '日结', 
-      url: 'https://www.taobao.com',
-      userCount: '8亿+',
-      categories: ['电商', '直播', '内容电商', '品牌店铺'],
-      difficulty: '高',
-      monetization: ['商品销售', '直播带货', '内容电商'],
-      description: '中国最大的电商平台，适合有货源或供应链优势的创作者'
-    },
-    { 
-      name: '微信视频号', 
-      type: '短视频平台', 
-      friendly: 8, 
-      cycle: '周结', 
-      url: 'https://weixin.qq.com',
-      userCount: '8亿+',
-      categories: ['短视频', '直播', '社交', '电商'],
-      difficulty: '低',
-      monetization: ['直播带货', '广告分成', '知识付费'],
-      description: '微信生态内的短视频平台，社交属性强，适合私域流量转化'
-    }
-  ]
-
-  const checkRisk = (platform: string) => {
-    setIsLoading(true)
-    
-    // 模拟风险评估
-    setTimeout(() => {
-      let risk: RiskInfoType
-      
-      if (platform === '小红书' || platform === '闲鱼' || platform === '微信视频号') {
-        risk = {
-          level: 'low',
-          levelText: '低风险',
-          warnings: [],
-          suggestions: [
-            '平台规则相对透明，适合新手入门',
-            '建议先从分享个人经验开始，积累粉丝',
-            '避免过度营销，保持内容真实性',
-            '可考虑多平台分发，扩大影响力'
-          ],
-          riskFactors: [
-            { factor: '平台政策', level: '友好', description: '对创作者政策友好，内容审核相对宽松' },
-            { factor: '竞争程度', level: '中等', description: '有一定竞争但仍有发展空间' },
-            { factor: '变现难度', level: '较低', description: '多种变现渠道，门槛适中' },
-            { factor: '用户粘性', level: '高', description: '用户粘性强，互动率高' }
-          ],
-          estimatedTime: '1-3个月见效',
-          investment: '低投入（时间为主）'
-        }
-      } else if (platform === '猪八戒网' || platform === '淘宝') {
-        risk = {
-          level: 'high',
-          levelText: '高风险',
-          warnings: [
-            '平台抽成较高（20-30%）',
-            '竞争激烈，新手接单难度大',
-            '需要大量前期投入',
-            '平台规则复杂，违规风险高'
-          ],
-          suggestions: [
-            '谨慎评估自身资源和能力',
-            '建议先从低风险平台开始积累',
-            '如果选择此平台，需做好长期投入准备',
-            '寻求专业指导，降低试错成本'
-          ],
-          riskFactors: [
-            { factor: '平台政策', level: '严格', description: '政策严格，违规风险高' },
-            { factor: '竞争程度', level: '极高', description: '市场饱和，新进入者困难' },
-            { factor: '变现难度', level: '高', description: '变现门槛高，需要大量资源' },
-            { factor: '用户粘性', level: '低', description: '用户粘性低，获取成本高' }
-          ],
-          estimatedTime: '6-12个月见效',
-          investment: '高投入（时间+大量资金）'
-        }
-      } else {
-        risk = {
-          level: 'medium',
-          levelText: '中等风险',
-          warnings: [
-            '平台政策变动频繁，需及时关注',
-            '内容质量要求高，创作压力大',
-            '变现周期较长，需要耐心'
-          ],
-          suggestions: [
-            '深入了解平台规则，避免违规',
-            '找到细分领域，做差异化内容',
-            '建立私域流量，降低平台依赖',
-            '考虑与其他创作者合作共赢'
-          ],
-          riskFactors: [
-            { factor: '平台政策', level: '一般', description: '政策变动频繁，需及时关注' },
-            { factor: '竞争程度', level: '高', description: '竞争激烈，需要差异化内容' },
-            { factor: '变现难度', level: '中等', description: '有一定变现门槛，需要积累' },
-            { factor: '用户粘性', level: '中等', description: '用户粘性一般，需要持续输出' }
-          ],
-          estimatedTime: '3-6个月见效',
-          investment: '中等投入（时间+少量资金）'
-        }
-      }
-      
-      setRiskInfo(risk)
-      setIsLoading(false)
-    }, 2000)
-  }
-
-  const handlePlatformSelect = (platformName: string) => {
-    setSelectedPlatform(platformName)
-    setRiskInfo(null)
-    setExpandedPlatform(expandedPlatform === platformName ? null : platformName)
-  }
-
-  return (
-    <div>
-      <nav className="nav">
-        <div className="container">
-          <div className="nav-container">
-            <Link to="/" className="nav-logo">
-              AI_FIRE_Home
-            </Link>
-            <div className="nav-links">
-              <Link to="/skill-finder" className="nav-link">技能挖掘机</Link>
-              <Link to="/business-planner" className="nav-link">副业拆解器</Link>
-              <Link to="/risk-alert" className="nav-link active">避坑雷达</Link>
-              <Link to="/community" className="nav-link">小圈互助</Link>
-            </div>
-            <button className="btn-primary">开始赚钱</button>
-          </div>
-        </div>
-      </nav>
-
-      <section className="section">
-        <div className="container">
-          <div className="text-center mb-8">
-            <h1 className="section-title">实时避坑雷达</h1>
-            <p className="section-subtitle">
-              1秒识别副业风险，对接100+正规平台，安全副业不踩坑
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* 平台列表 */}
-            <div className="card slide-in-left">
-              <div className="card-header">
-                <h2 className="card-title">选择平台</h2>
-                <p className="card-subtitle">选择你想了解的平台，获取详细风险评估</p>
-              </div>
-              <div className="space-y-3">
-                {platforms.map((platform: PlatformType) => (
-                  <div
-                    key={platform.name}
-                    className={`platform-card ${selectedPlatform === platform.name ? 'selected' : ''}`}
-                    onClick={() => handlePlatformSelect(platform.name)}
-                  >
-                    <div className="platform-card-header">
-                      <div className="platform-info">
-                        <h3 className="platform-name">{platform.name}</h3>
-                        <div className="platform-meta">
-                          <span className="platform-type">{platform.type}</span>
-                          <span className={`difficulty difficulty-${platform.difficulty}`}>
-                            {platform.difficulty}难度
-                          </span>
-                        </div>
-                      </div>
-                      <div className="platform-stats">
-                        <div className="platform-users">{platform.userCount}</div>
-                        <div className="platform-friendly">
-                          <div className="friendly-bar">
-                            <div 
-                              className="friendly-fill" 
-                              style={{ width: `${platform.friendly * 10}%` }}
-                            ></div>
-                          </div>
-                          <span>{platform.friendly}/10</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {expandedPlatform === platform.name && (
-                      <div className="platform-details">
-                        <p className="platform-description">{platform.description}</p>
-                        
-                        <div className="platform-sections">
-                          <div className="platform-section">
-                            <h4 className="section-title">主要领域</h4>
-                            <div className="platform-categories">
-                              {platform.categories?.map((category, index) => (
-                                <span key={index} className="category-tag">{category}</span>
-                              ))}
-                            </div>
-                          </div>
-                          
-                          <div className="platform-section">
-                            <h4 className="section-title">变现方式</h4>
-                            <div className="platform-monetization">
-                              {platform.monetization?.map((method: string, index: number) => (
-                                <span key={index} className="monetization-tag">{method}</span>
-                              ))}
-                            </div>
-                          </div>
-                          
-                          <div className="platform-section">
-                            <h4 className="section-title">结算周期</h4>
-                            <span className="cycle-tag">{platform.cycle}</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-              <button
-                className="btn-primary w-full mt-4"
-                onClick={() => selectedPlatform && checkRisk(selectedPlatform)}
-                disabled={!selectedPlatform || isLoading}
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center">
-                    <div className="spinner mr-2"></div>
-                    AI正在评估风险...
-                  </span>
-                ) : '检查风险'}
-              </button>
-            </div>
-
-            {/* 风险评估结果 */}
-            <div className={`card slide-in-right ${riskInfo ? 'show' : ''}`}>
-              <div className="card-header">
-                <h2 className="card-title">风险评估结果</h2>
-                <p className="card-subtitle">基于AI分析的风险评估和建议</p>
-              </div>
-              
-              {isLoading ? (
-                <div className="space-y-4">
-                  <Skeleton type="text" lines={3} />
-                  <div className="flex justify-center mb-4">
-                    <Skeleton type="text" height="4rem" width="4rem" />
-                  </div>
-                  <Skeleton type="card" />
-                  <Skeleton type="list" lines={4} />
-                  <Skeleton type="list" lines={3} />
-                </div>
-              ) : riskInfo ? (
-                <div className="space-y-6 fade-in">
-                  <div className="text-center">
-                    <div className={`risk-level risk-${riskInfo.level} text-lg font-bold mb-4`}>
-                      {riskInfo.levelText}
-                    </div>
-                    <div className="flex justify-center mb-4">
-                      {riskInfo.level === 'low' && <div className="text-6xl">✅</div>}
-                      {riskInfo.level === 'medium' && <div className="text-6xl">⚠️</div>}
-                      {riskInfo.level === 'high' && <div className="text-6xl">❌</div>}
-                    </div>
-                  </div>
-                  
-                  {/* 预估时间和投入 */}
-                  <div className="risk-overview">
-                    <div className="overview-item">
-                      <span className="overview-label">预估见效时间</span>
-                      <span className="overview-value">{riskInfo.estimatedTime}</span>
-                    </div>
-                    <div className="overview-item">
-                      <span className="overview-label">投入成本</span>
-                      <span className="overview-value">{riskInfo.investment}</span>
-                    </div>
-                  </div>
-                  
-                  {/* 风险因素 */}
-                  <div>
-                    <h3 className="font-bold text-lg mb-3">风险因素分析</h3>
-                    <div className="space-y-3">
-                      {riskInfo.riskFactors?.map((factor: any, index: number) => (
-                        <div key={index} className="risk-factor">
-                          <div className="factor-header">
-                            <span className="factor-name">{factor.factor}</span>
-                            <span className={`factor-level factor-${factor.level}`}>{factor.level}</span>
-                          </div>
-                          <p className="factor-description">{factor.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  {/* 风险提示 */}
-                  {riskInfo.warnings.length > 0 && (
-                    <div>
-                      <h3 className="font-bold text-lg mb-3">⚠️ 风险提示</h3>
-                      <ul className="space-y-2">
-                        {riskInfo.warnings.map((warning: string, index: number) => (
-                          <li key={index} className="task-item border-l-4 border-warning-color">
-                            {warning}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  
-                  {/* 安全建议 */}
-                  <div>
-                    <h3 className="font-bold text-lg mb-3">💡 安全建议</h3>
-                    <ul className="space-y-2">
-                      {riskInfo.suggestions.map((suggestion: string, index: number) => (
-                        <li key={index} className="task-item border-l-4 border-success-color">
-                          {suggestion}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">⚠️</div>
-                  <h3 className="text-xl font-bold mb-2">选择平台进行风险评估</h3>
-                  <p className="text-text-secondary">从左侧选择一个平台，获取详细的风险评估和安全建议</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  )
-}
-
-// 小圈互助组件
-const Community: React.FC = () => {
-  const [selectedGroup, setSelectedGroup] = useState<string>('')
-  const [tasks, setTasks] = useState<TaskType[]>([])
-  const [completedTasks, setCompletedTasks] = useState<string[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState<'tasks' | 'activities' | 'resources'>('tasks')
-  const [newPost, setNewPost] = useState('')
-  const [posts, setPosts] = useState<PostType[]>([])
-  const [showJoinModal, setShowJoinModal] = useState(false)
-  const [joinedGroups, setJoinedGroups] = useState<string[]>([])
-  const [userPoints, setUserPoints] = useState(0)
-  const [showComments, setShowComments] = useState<{ [key: string]: boolean }>({})
-  const [comments, setComments] = useState<{ [key: string]: string[] }>({})
-  const [newComment, setNewComment] = useState<{ [key: string]: string }>({})
-  const [leaderboard, setLeaderboard] = useState([
-    { id: '1', name: '张明', avatar: '😊', points: 1250, rank: 1 },
-    { id: '2', name: '李华', avatar: '🎯', points: 1180, rank: 2 },
-    { id: '3', name: '王芳', avatar: '🌟', points: 1050, rank: 3 },
-    { id: '4', name: '刘强', avatar: '💪', points: 980, rank: 4 },
-    { id: '5', name: '陈静', avatar: '🚀', points: 920, rank: 5 },
-    { id: '6', name: '我', avatar: '🙂', points: 0, rank: 0 }
-  ])
-
-  // 定义任务类型
-  interface TaskType {
-    id: string
-    title: string
-    description: string
-    points: number
-    deadline: string
-    category: string
-  }
-
-  // 定义帖子类型
-  interface PostType {
-    id: string
-    author: string
-    avatar: string
-    time: string
-    content: string
-    likes: number
-    comments: number
-    liked: boolean
-  }
-
-  const groups = [
-    { 
-      id: '1', 
-      name: 'Excel技能变现小组', 
-      members: 5, 
-      focus: 'Excel技能变现',
-      description: '分享Excel高级技巧，共同接单变现',
-      difficulty: '初级',
-      weeklyEarnings: '500-2000元',
-      tags: ['Excel', '数据分析', '报表制作']
-    },
-    { 
-      id: '2', 
-      name: '收纳整理师小组', 
-      members: 4, 
-      focus: '收纳整理服务',
-      description: '学习收纳技巧，提供上门整理服务',
-      difficulty: '中级',
-      weeklyEarnings: '800-3000元',
-      tags: ['收纳整理', '空间规划', '上门服务']
-    },
-    { 
-      id: '3', 
-      name: '母婴测评小组', 
-      members: 5, 
-      focus: '母婴用品测评',
-      description: '测评母婴产品，分享使用经验',
-      difficulty: '初级',
-      weeklyEarnings: '300-1500元',
-      tags: ['母婴', '产品测评', '内容创作']
-    },
-    { 
-      id: '4', 
-      name: '小红书运营小组', 
-      members: 3, 
-      focus: '小红书内容创作',
-      description: '学习小红书运营技巧，提升内容变现能力',
-      difficulty: '中级',
-      weeklyEarnings: '1000-5000元',
-      tags: ['小红书', '内容运营', '流量变现']
-    },
-    { 
-      id: '5', 
-      name: 'PPT设计小组', 
-      members: 4, 
-      focus: 'PPT模板设计',
-      description: '设计精美PPT模板，提供定制服务',
-      difficulty: '中级',
-      weeklyEarnings: '600-2500元',
-      tags: ['PPT设计', '模板制作', '演示设计']
-    }
-  ]
-
-  const samplePosts: PostType[] = [
-    {
-      id: '1',
-      author: '张三',
-      avatar: '👨‍💼',
-      time: '2小时前',
-      content: '今天完成了第一单Excel报表制作，收入200元！感谢小组的帮助！分享一下我的制作过程...',
-      likes: 12,
-      comments: 5,
-      liked: false
-    },
-    {
-      id: '2',
-      author: '李四',
-      avatar: '👩‍💻',
-      time: '5小时前',
-      content: '分享一个小技巧：做PPT时可以先确定整体风格，再填充内容，效率会提高很多。这是我今天做的一个模板...',
-      likes: 18,
-      comments: 8,
-      liked: true
-    },
-    {
-      id: '3',
-      author: '王五',
-      avatar: '👨‍🎨',
-      time: '1天前',
-      content: '最近接了一个收纳整理的单子，客户非常满意！整理前vs整理后对比图，效果真的很明显...',
-      likes: 25,
-      comments: 12,
-      liked: false
-    }
-  ]
-
-  const generateTasks = (_groupId: string) => {
-    setIsLoading(true)
-    
-    // 模拟生成任务
-    setTimeout(() => {
-      const generatedTasks: TaskType[] = [
-        {
-          id: '1',
-          title: '分享副业成果',
-          description: '分享一个你最近的副业成果（图片/截图），并简要说明过程和心得',
-          points: 10,
-          deadline: '今天 23:59',
-          category: '分享'
-        },
-        {
-          id: '2',
-          title: '互助点评',
-          description: '为小组其他成员的副业项目提一条建设性建议',
-          points: 5,
-          deadline: '今天 23:59',
-          category: '互助'
-        },
-        {
-          id: '3',
-          title: '学习打卡',
-          description: '完成今日副业相关学习任务并打卡，分享学习笔记',
-          points: 5,
-          deadline: '今天 23:59',
-          category: '学习'
-        },
-        {
-          id: '4',
-          title: '内容创作',
-          description: '在小红书/抖音发布一条与副业相关的内容，并分享链接',
-          points: 15,
-          deadline: '明天 23:59',
-          category: '实践'
-        },
-        {
-          id: '5',
-          title: '财务复盘',
-          description: '整理本周副业收入和支出，分享经验教训',
-          points: 10,
-          deadline: '周日 23:59',
-          category: '复盘'
-        }
-      ]
-      
-      setTasks(generatedTasks)
-      setPosts(samplePosts)
-      setIsLoading(false)
-    }, 1000)
-  }
-
-  const handleTaskComplete = (taskId: string) => {
-    if (completedTasks.includes(taskId)) {
-      setCompletedTasks(completedTasks.filter(id => id !== taskId))
-    } else {
-      setCompletedTasks([...completedTasks, taskId])
-    }
-  }
-
-  const handleJoinGroup = (groupId: string) => {
-    setJoinedGroups([...joinedGroups, groupId])
-    setShowJoinModal(false)
-  }
-
-  const handleLikePost = (postId: string) => {
-    const post = posts.find(p => p.id === postId)
-    const isLiked = post?.liked || false
-    
-    setPosts(posts.map(p => 
-      p.id === postId 
-        ? { ...p, liked: !p.liked, likes: p.liked ? p.likes - 1 : p.likes + 1 }
-        : p
-    ))
-    
-    // 点赞获得积分（只有当之前未点赞时才给积分）
-    if (!isLiked) {
-      setUserPoints(userPoints + 1)
-      // 更新排行榜中的用户积分
-      setLeaderboard(prev => prev.map(user => 
-        user.name === '我' ? { ...user, points: userPoints + 1 } : user
-      ))
-    }
-  }
-
-  const handleCommentToggle = (postId: string) => {
-    setShowComments({
-      ...showComments,
-      [postId]: !showComments[postId]
-    })
-  }
-
-  const handleAddComment = (postId: string) => {
-    if (newComment[postId] && newComment[postId].trim()) {
-      const postComments = comments[postId] || []
-      setComments({
-        ...comments,
-        [postId]: [...postComments, newComment[postId]]
-      })
-      
-      // 更新评论数
-      setPosts(posts.map(post => 
-        post.id === postId 
-          ? { ...post, comments: post.comments + 1 }
-          : post
-      ))
-      
-      // 清空评论输入
-      setNewComment({
-        ...newComment,
-        [postId]: ''
-      })
-      
-      // 评论获得积分
-      setUserPoints(userPoints + 1)
-      // 更新排行榜中的用户积分
-      setLeaderboard(prev => prev.map(user => 
-        user.name === '我' ? { ...user, points: userPoints + 1 } : user
-      ))
-    }
-  }
-
-  const handleNewPost = () => {
-    if (newPost.trim()) {
-      const post: PostType = {
-        id: Date.now().toString(),
-        author: '我',
-        avatar: '🙂',
-        time: '刚刚',
-        content: newPost,
-        likes: 0,
-        comments: 0,
-        liked: false
-      }
-      setPosts([post, ...posts])
-      setNewPost('')
-      // 发布新帖获得积分
-      setUserPoints(userPoints + 2)
-      // 更新排行榜中的用户积分
-      setLeaderboard(prev => prev.map(user => 
-        user.name === '我' ? { ...user, points: userPoints + 2 } : user
-      ))
-    }
-  }
-
-  const handleSubmitTasks = () => {
-    if (completedTasks.length === 0) {
-      alert('请至少完成一项任务后再提交')
-      return
-    }
-    
-    const points = tasks.filter(t => completedTasks.includes(t.id)).reduce((sum, task) => sum + task.points, 0)
-    
-    // 创建任务提交成功的动态
-    const post: PostType = {
-      id: Date.now().toString(),
-      author: '我',
-      avatar: '🙂',
-      time: '刚刚',
-      content: `今日任务已完成！共完成${completedTasks.length}项任务，获得${points}积分。继续加油！💪`,
-      likes: 0,
-      comments: 0,
-      liked: false
-    }
-    
-    setPosts([post, ...posts])
-    alert(`任务提交成功！您获得了${points}积分`)
-    // 更新用户积分
-    setUserPoints(userPoints + points)
-    // 更新排行榜中的用户积分
-    setLeaderboard(prev => prev.map(user => 
-      user.name === '我' ? { ...user, points: userPoints + points } : user
-    ))
-  }
-
-  return (
-    <div>
-      <nav className="nav">
-        <div className="container">
-          <div className="nav-container">
-            <Link to="/" className="nav-logo">
-              AI_FIRE_Home
-            </Link>
-            <div className="nav-links">
-              <Link to="/skill-finder" className="nav-link">技能挖掘机</Link>
-              <Link to="/business-planner" className="nav-link">副业拆解器</Link>
-              <Link to="/risk-alert" className="nav-link">避坑雷达</Link>
-              <Link to="/community" className="nav-link active">小圈互助</Link>
-            </div>
-            <button className="btn-primary">开始赚钱</button>
-          </div>
-        </div>
-      </nav>
-
-      <section className="section">
-        <div className="container">
-          <div className="text-center mb-8">
-            <h1 className="section-title">小圈互助</h1>
-            <p className="section-subtitle">
-              5人小组互助成长，每天1个小任务，实战经验分享
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* 小组列表 */}
-            <div className="space-y-6">
-              {/* 积分面板 */}
-              <div className="card slide-in-left">
-                <div className="card-header">
-                  <h2 className="card-title">我的积分</h2>
-                </div>
-                <div className="flex justify-between items-center mb-4">
-                  <div className="text-3xl font-bold text-indigo-600">{userPoints}</div>
-                  <div className="text-sm text-gray-500">总积分</div>
-                </div>
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="bg-gray-50 rounded-lg p-2">
-                    <div className="text-lg font-semibold text-gray-800">{joinedGroups.length}</div>
-                    <div className="text-xs text-gray-500">加入小组</div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-2">
-                    <div className="text-lg font-semibold text-gray-800">{completedTasks.length}</div>
-                    <div className="text-xs text-gray-500">完成任务</div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-2">
-                    <div className="text-lg font-semibold text-gray-800">{posts.filter(p => p.author === '我').length}</div>
-                    <div className="text-xs text-gray-500">发布动态</div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* 小组选择卡片 */}
-              <div className="card slide-in-left">
-                <div className="card-header">
-                  <h2 className="card-title">选择小组</h2>
-                  <p className="card-subtitle">选择一个小组，开始互助成长</p>
-                </div>
-                <div className="space-y-3">
-                {groups.map((group) => (
-                  <div
-                    key={group.id}
-                    className={`group-card cursor-pointer ${
-                      selectedGroup === group.id ? 'selected' : ''
-                    }`}
-                    onClick={() => {
-                      setSelectedGroup(group.id)
-                      setTasks([])
-                      setActiveTab('tasks')
-                    }}
-                  >
-                    <div className="group-card-header">
-                      <div className="group-info">
-                        <h3 className="group-name">{group.name}</h3>
-                        <div className="group-meta">
-                          <span className={`difficulty difficulty-${group.difficulty === '初级' ? 'easy' : group.difficulty === '中级' ? 'medium' : 'hard'}`}>
-                            {group.difficulty}
-                          </span>
-                          <span className="weekly-earnings">{group.weeklyEarnings}</span>
-                        </div>
-                      </div>
-                      <div className="group-members">
-                        <div className="member-avatars">
-                          {[...Array(group.members)].map((_, i) => (
-                            <div key={i} className="member-avatar">
-                              <span className="text-xs">👤</span>
-                            </div>
-                          ))}
-                          {[...Array(5 - group.members)].map((_, i) => (
-                            <div key={i} className="member-avatar empty">
-                              <span className="text-xs">+</span>
-                            </div>
-                          ))}
-                        </div>
-                        <span className="member-count">{group.members}/5人</span>
-                      </div>
-                    </div>
-                    
-                    <p className="group-description">{group.description}</p>
-                    
-                    <div className="group-tags">
-                      {group.tags.map((tag, index) => (
-                        <span key={index} className="tag">{tag}</span>
-                      ))}
-                    </div>
-                    
-                    {joinedGroups.includes(group.id) ? (
-                      <div className="join-status joined">已加入</div>
-                    ) : (
-                      <div className="join-status" onClick={(e) => {
-                        e.stopPropagation()
-                        setShowJoinModal(true)
-                      }}>点击加入</div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 任务和活动区域 */}
-            <div className="lg:col-span-2">
-              {selectedGroup ? (
-                <div className="card slide-in-right">
-                  <div className="card-header">
-                    <h2 className="card-title">
-                      {groups.find(g => g.id === selectedGroup)?.name}
-                    </h2>
-                    <p className="card-subtitle">与小组一起成长，共同进步</p>
-                  </div>
-                  
-                  {/* 标签页导航 */}
-                  <div className="tab-navigation">
-                    <button
-                      className={`tab ${activeTab === 'tasks' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('tasks')}
-                    >
-                      今日任务
-                    </button>
-                    <button
-                      className={`tab ${activeTab === 'activities' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('activities')}
-                    >
-                      小组动态
-                    </button>
-                    <button
-                      className={`tab ${activeTab === 'resources' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('resources')}
-                    >
-                      学习资源
-                    </button>
-                  </div>
-                  
-                  {/* 任务标签页 */}
-                  {activeTab === 'tasks' && (
-                    <div className="tab-content fade-in">
-                      {tasks.length > 0 ? (
-                        <div className="space-y-4">
-                          <div className="task-summary">
-                            <div className="task-progress">
-                              <div className="progress-bar">
-                                <div 
-                                  className="progress-fill" 
-                                  style={{ width: `${(completedTasks.length / tasks.length) * 100}%` }}
-                                ></div>
-                              </div>
-                              <span className="progress-text">
-                                {completedTasks.length}/{tasks.length} 已完成
-                              </span>
-                            </div>
-                            <div className="points-earned">
-                              获得积分: {tasks.filter(t => completedTasks.includes(t.id)).reduce((sum, task) => sum + task.points, 0)}
-                            </div>
-                          </div>
-                          
-                          {tasks.map((task: TaskType) => (
-                            <div 
-                              key={task.id} 
-                              className={`task-card ${completedTasks.includes(task.id) ? 'completed' : ''}`}
-                            >
-                              <div className="task-header">
-                                <div className="task-info">
-                                  <h3 className="task-title">{task.title}</h3>
-                                  <div className="task-meta">
-                                    <span className="task-category">{task.category}</span>
-                                    <span className="task-points">+{task.points}积分</span>
-                                    <span className="task-deadline">{task.deadline}</span>
-                                  </div>
-                                </div>
-                                <div className="task-checkbox">
-                                  <input
-                                    type="checkbox"
-                                    checked={completedTasks.includes(task.id)}
-                                    onChange={() => handleTaskComplete(task.id)}
-                                  />
-                                </div>
-                              </div>
-                              <p className="task-description">{task.description}</p>
-                            </div>
-                          ))}
-                          
-                          <button className="btn-primary w-full mt-4" onClick={handleSubmitTasks}>
-                            提交今日任务
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="text-center py-8">
-                          <div className="text-6xl mb-4">📋</div>
-                          <h3 className="text-xl font-bold mb-2">获取今日任务</h3>
-                          <p className="text-text-secondary mb-4">完成任务，获得积分，与小组一起成长</p>
-                          <button
-                            className="btn-primary"
-                            onClick={() => selectedGroup && generateTasks(selectedGroup)}
-                            disabled={isLoading}
-                          >
-                            {isLoading ? (
-                              <span className="flex items-center justify-center">
-                                <div className="spinner mr-2"></div>
-                                正在生成任务...
-                              </span>
-                            ) : '获取今日任务'}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  
-                  {/* 小组动态标签页 */}
-                  {activeTab === 'activities' && (
-                    <div className="tab-content fade-in">
-                      {/* 发布新动态 */}
-                      <div className="post-creator">
-                        <div className="post-input">
-                          <textarea
-                            placeholder="分享你的副业经验、心得或问题..."
-                            value={newPost}
-                            onChange={(e) => setNewPost(e.target.value)}
-                          ></textarea>
-                          <button 
-                            className="btn-primary btn-sm"
-                            onClick={handleNewPost}
-                            disabled={!newPost.trim()}
-                          >
-                            发布
-                          </button>
-                        </div>
-                      </div>
-                      
-                      {/* 动态列表 */}
-                      <div className="posts-list">
-                        {posts.map((post) => (
-                          <div key={post.id} className="post-card">
-                            <div className="post-header">
-                              <div className="post-author">
-                                <div className="author-avatar">{post.avatar}</div>
-                                <div className="author-info">
-                                  <div className="author-name">{post.author}</div>
-                                  <div className="post-time">{post.time}</div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="post-content">{post.content}</div>
-                            <div className="post-actions">
-                              <button
-                                className={`action-btn ${post.liked ? 'liked' : ''}`}
-                                onClick={() => handleLikePost(post.id)}
-                              >
-                                {post.liked ? '❤️' : '🤍'} {post.likes}
-                              </button>
-                              <button 
-                                className="action-btn"
-                                onClick={() => handleCommentToggle(post.id)}
-                              >
-                                💬 {post.comments}
-                              </button>
-                              <button className="action-btn">
-                                📤 分享
-                              </button>
-                            </div>
-                            
-                            {/* 评论区域 */}
-                            {showComments[post.id] && (
-                              <div className="comments-section mt-4 pt-4 border-t border-gray-100">
-                                {/* 评论列表 */}
-                                {comments[post.id] && comments[post.id].length > 0 && (
-                                  <div className="comments-list mb-3">
-                                    {comments[post.id].map((comment, index) => (
-                                      <div key={index} className="comment-item mb-2 p-2 bg-gray-50 rounded">
-                                        <div className="flex items-center mb-1">
-                                          <span className="text-sm font-medium">用户{index + 1}</span>
-                                          <span className="text-xs text-gray-500 ml-2">刚刚</span>
-                                        </div>
-                                        <div className="text-sm text-gray-700">{comment}</div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                                
-                                {/* 添加评论 */}
-                                <div className="comment-input flex gap-2">
-                                  <input
-                                    type="text"
-                                    placeholder="添加评论..."
-                                    value={newComment[post.id] || ''}
-                                    onChange={(e) => setNewComment({
-                                      ...newComment,
-                                      [post.id]: e.target.value
-                                    })}
-                                    className="flex-1 px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                    onKeyPress={(e) => {
-                                      if (e.key === 'Enter') {
-                                        handleAddComment(post.id)
-                                      }
-                                    }}
-                                  />
-                                  <button
-                                    className="btn-primary btn-sm"
-                                    onClick={() => handleAddComment(post.id)}
-                                    disabled={!newComment[post.id]?.trim()}
-                                  >
-                                    发送
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* 学习资源标签页 */}
-                  {activeTab === 'resources' && (
-                    <div className="tab-content fade-in">
-                      <div className="resources-grid">
-                        <div className="resource-card">
-                          <div className="resource-icon">📚</div>
-                          <h3 className="resource-title">入门指南</h3>
-                          <p className="resource-description">新手入门必读，快速了解副业基础知识</p>
-                          <button className="btn-secondary btn-sm" onClick={() => alert('入门指南功能正在开发中')}>查看详情</button>
-                        </div>
-                        
-                        <div className="resource-card">
-                          <div className="resource-icon">🎥</div>
-                          <h3 className="resource-title">视频教程</h3>
-                          <p className="resource-description">精选视频教程，直观学习实操技巧</p>
-                          <button className="btn-secondary btn-sm" onClick={() => alert('视频教程功能正在开发中')}>查看详情</button>
-                        </div>
-                        
-                        <div className="resource-card">
-                          <div className="resource-icon">📝</div>
-                          <h3 className="resource-title">模板工具</h3>
-                          <p className="resource-description">实用模板和工具，提高工作效率</p>
-                          <button className="btn-secondary btn-sm" onClick={() => alert('模板工具功能正在开发中')}>查看详情</button>
-                        </div>
-                        
-                        <div className="resource-card">
-                          <div className="resource-icon">💡</div>
-                          <h3 className="resource-title">成功案例</h3>
-                          <p className="resource-description">学习成功案例，借鉴经验少走弯路</p>
-                          <button className="btn-secondary btn-sm" onClick={() => alert('成功案例功能正在开发中')}>查看详情</button>
-                        </div>
-                        
-                        <div className="resource-card">
-                          <div className="resource-icon">🔍</div>
-                          <h3 className="resource-title">市场分析</h3>
-                          <p className="resource-description">最新市场趋势分析，把握行业动态</p>
-                          <button className="btn-secondary btn-sm" onClick={() => alert('市场分析功能正在开发中')}>查看详情</button>
-                        </div>
-                        
-                        <div className="resource-card">
-                          <div className="resource-icon">🤝</div>
-                          <h3 className="resource-title">合作机会</h3>
-                          <p className="resource-description">发现合作伙伴，拓展业务渠道</p>
-                          <button className="btn-secondary btn-sm" onClick={() => alert('合作机会功能正在开发中')}>查看详情</button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="card h-full flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-6xl mb-4">👥</div>
-                    <h3 className="text-xl font-bold mb-2">选择一个小组</h3>
-                    <p className="text-text-secondary">从左侧选择一个小组，开始互助成长之旅</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-          
-          </div>
-          
-          {/* 加入小组确认弹窗 */}
-          {showJoinModal && (
-            <div className="modal-overlay">
-              <div className="modal">
-                <div className="modal-header">
-                  <h3 className="modal-title">加入小组</h3>
-                  <button 
-                    className="modal-close"
-                    onClick={() => setShowJoinModal(false)}
-                  >
-                    ✕
-                  </button>
-                </div>
-                <div className="modal-body">
-                  <p>确定要加入这个小组吗？加入后可以参与小组任务和互动。</p>
-                </div>
-                <div className="modal-footer">
-                  <button 
-                    className="btn-secondary"
-                    onClick={() => setShowJoinModal(false)}
-                  >
-                    取消
-                  </button>
-                  <button 
-                    className="btn-primary"
-                    onClick={() => selectedGroup && handleJoinGroup(selectedGroup)}
-                  >
-                    确认加入
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* 排行榜卡片 */}
-          <div className="card slide-in-left">
-            <div className="card-header">
-              <h2 className="card-title">积分排行榜</h2>
-              <p className="card-subtitle">本周积分排名</p>
-            </div>
-            <div className="space-y-2">
-              {leaderboard.map((user) => (
-                <div key={user.id} className={`leaderboard-item ${user.name === '我' ? 'current-user' : ''}`}>
-                  <div className="flex items-center">
-                    <div className={`rank-badge rank-${user.rank <= 3 ? 'top' : 'normal'}`}>
-                      {user.rank > 0 ? user.rank : '—'}
-                    </div>
-                    <div className="user-avatar">{user.avatar}</div>
-                    <div className="user-info">
-                      <div className="user-name">{user.name}</div>
-                      <div className="user-points">{user.points} 积分</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  )
-}
+// 保留第一个简化版本，删除重复的完整版本
 
 // 页面过渡动画组件
 const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -4890,22 +3599,19 @@ const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) =
   const [displayLocation, setDisplayLocation] = useState(location)
   const [transitionStage, setTransitionStage] = useState('fadeIn')
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (location !== displayLocation) {
       setTransitionStage('fadeOut')
     }
   }, [location, displayLocation])
 
   return (
-    <div
-      className={`page-transition ${transitionStage}`}
-      onAnimationEnd={() => {
-        if (transitionStage === 'fadeOut') {
-          setTransitionStage('fadeIn')
-          setDisplayLocation(location)
-        }
-      }}
-    >
+    <div className={`page-transition ${transitionStage}`} onAnimationEnd={() => {
+      if (transitionStage === 'fadeOut') {
+        setTransitionStage('fadeIn')
+        setDisplayLocation(location)
+      }
+    }}>
       {children}
     </div>
   )
@@ -4914,36 +3620,40 @@ const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) =
 // App组件
 const App: React.FC = () => {
   return (
-    <Router>
+    <div className="apple-app">
+      <Router>
       <Routes>
         <Route path="/" element={
-          <PageTransition>
             <HomePage />
-          </PageTransition>
         } />
         <Route path="/skill-finder" element={
-          <PageTransition>
             <SkillFinder />
-          </PageTransition>
         } />
         <Route path="/business-planner" element={
-          <PageTransition>
+
             <BusinessPlanner />
-          </PageTransition>
+     
         } />
-        <Route path="/risk-alert" element={
-          <PageTransition>
-            <RiskAlert />
-          </PageTransition>
-        } />
+        
         <Route path="/community" element={
-          <PageTransition>
-            <Community />
-          </PageTransition>
+
+            <WeChatCommunity />
         } />
+
       </Routes>
-    </Router>
+      </Router>
+    </div>
   )
 }
 
 export default App
+
+export const AppWithAuth: React.FC = () => {
+  return (
+    <AuthProvider>
+      <App />
+      <LoginModal />
+      <RegisterModal />
+    </AuthProvider>
+  );
+}

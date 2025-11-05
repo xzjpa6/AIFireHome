@@ -3,7 +3,7 @@ exports.handler = async (event, context) => {
   // 设置CORS头
   const headers = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Content-Type': 'application/json'
   }
@@ -27,19 +27,17 @@ exports.handler = async (event, context) => {
 
   try {
     const body = JSON.parse(event.body)
-    const authHeader = event.headers.authorization || event.headers.Authorization
-    
-    console.log('接收到请求:', {
-      body,
-      hasAuth: !!authHeader,
-      authPrefix: authHeader ? authHeader.substring(0, 20) + '...' : '无'
+    const apiKey = process.env.DEEPSEEK_API_KEY
+
+    console.log('接收到请求: 使用服务端密钥调用', {
+      hasServerKey: !!apiKey
     })
 
-    if (!authHeader) {
+    if (!apiKey) {
       return {
-        statusCode: 401,
+        statusCode: 500,
         headers,
-        body: JSON.stringify({ error: '缺少认证头' })
+        body: JSON.stringify({ error: '服务器未配置 DEEPSEEK_API_KEY 环境变量' })
       }
     }
 
@@ -48,7 +46,7 @@ exports.handler = async (event, context) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': authHeader
+        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify(body)
     })
