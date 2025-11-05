@@ -789,7 +789,6 @@ const SkillFinder: React.FC = () => {
               <form onSubmit={handleSubmit}>
                 <div className={`form-group ${currentStep >= 1 ? 'fade-in' : ''}`}>
                   <label className="form-label">
-                    <span className="step-number">1</span>
                     你擅长做什么？（例如：整理房间、Excel、带娃）
                   </label>
                   <input
@@ -810,7 +809,6 @@ const SkillFinder: React.FC = () => {
 
                 <div className={`form-group ${currentStep >= 2 ? 'fade-in' : ''}`}>
                   <label className="form-label">
-                    <span className="step-number">2</span>
                     每天有多少空闲时间？
                   </label>
                   <select
@@ -833,7 +831,6 @@ const SkillFinder: React.FC = () => {
                 </div>
                 <div className={`form-group ${currentStep >= 3 ? 'fade-in' : ''}`}>
                   <label className="form-label">
-                    <span className="step-number">3</span>
                     你能接受的辛苦程度？
                   </label>
                   <select
@@ -1077,7 +1074,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'organizer', 
       name: '线上收纳咨询', 
-      icon: '📦', 
       difficulty: '低', 
       time: '1-2小时/天', 
       income: '3000-5000元/月',
@@ -1090,7 +1086,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'excel', 
       name: 'Excel报表定制', 
-      icon: '📊', 
       difficulty: '中', 
       time: '2-3小时/天', 
       income: '4000-6000元/月',
@@ -1103,7 +1098,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'content', 
       name: '小红书内容创作', 
-      icon: '📱', 
       difficulty: '中', 
       time: '1-2小时/天', 
       income: '2000-4000元/月',
@@ -1116,7 +1110,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'review', 
       name: '母婴用品测评', 
-      icon: '🍼', 
       difficulty: '低', 
       time: '1小时/天', 
       income: '2000-3000元/月',
@@ -1129,7 +1122,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'tutor', 
       name: '在线家教辅导', 
-      icon: '🎓', 
       difficulty: '高', 
       time: '2-3小时/天', 
       income: '5000-8000元/月',
@@ -1142,7 +1134,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'design', 
       name: 'PPT设计服务', 
-      icon: '🎨', 
       difficulty: '中', 
       time: '1-2小时/天', 
       income: '3000-5000元/月',
@@ -1155,7 +1146,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'translate', 
       name: '文档翻译服务', 
-      icon: '🌐', 
       difficulty: '中', 
       time: '2-3小时/天', 
       income: '4000-6000元/月',
@@ -1168,7 +1158,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'voice', 
       name: '有声书录制', 
-      icon: '🎙️', 
       difficulty: '高', 
       time: '1-2小时/天', 
       income: '3000-5000元/月',
@@ -1181,7 +1170,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'video-edit', 
       name: '视频剪辑服务', 
-      icon: '🎬', 
       difficulty: '中', 
       time: '2-3小时/天', 
       income: '4000-7000元/月',
@@ -1194,7 +1182,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'handmade', 
       name: '手工艺品销售', 
-      icon: '🧶', 
       difficulty: '低', 
       time: '1-2小时/天', 
       income: '2000-4000元/月',
@@ -1207,7 +1194,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'pet', 
       name: '宠物寄养服务', 
-      icon: '🐕', 
       difficulty: '低', 
       time: '1-2小时/天', 
       income: '3000-5000元/月',
@@ -1220,7 +1206,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'coding', 
       name: '小程序开发', 
-      icon: '💻', 
       difficulty: '高', 
       time: '3-4小时/天', 
       income: '6000-10000元/月',
@@ -1233,7 +1218,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'fitness', 
       name: '健身教练指导', 
-      icon: '💪', 
       difficulty: '中', 
       time: '1-2小时/天', 
       income: '4000-6000元/月',
@@ -1246,7 +1230,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'cooking', 
       name: '私厨外卖服务', 
-      icon: '🍳', 
       difficulty: '中', 
       time: '2-3小时/天', 
       income: '5000-8000元/月',
@@ -1259,7 +1242,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'photo', 
       name: '摄影约拍服务', 
-      icon: '📷', 
       difficulty: '中', 
       time: '2-3小时/天', 
       income: '4000-7000元/月',
@@ -1272,7 +1254,6 @@ const BusinessPlanner: React.FC = () => {
     { 
       id: 'writing', 
       name: '文案撰稿服务', 
-      icon: '✍️', 
       difficulty: '低', 
       time: '1-2小时/天', 
       income: '3000-5000元/月',
@@ -3347,7 +3328,6 @@ const BusinessPlanner: React.FC = () => {
             {/* 副业选择 */}
             <div className="card slide-in-left">
               <div className="card-header">
-                <h2 className="card-title">选择你想做的副业</h2>
                 <p className="card-subtitle">点击选择，获取详细拆解方案</p>
               </div>
               <div className="space-y-4">
@@ -3370,7 +3350,6 @@ const BusinessPlanner: React.FC = () => {
                     }}
                   >
                     <div className="business-card-header">
-                      <div className="business-icon">{business.icon}</div>
                       <div className="business-info">
                         <h3 className="business-name">{business.name}</h3>
                         <div className="business-meta">
@@ -3537,28 +3516,6 @@ const BusinessPlanner: React.FC = () => {
                                   </li>
                                 ))}
                               </ul>
-                            </div>
-                            
-                            <div className="day-resources mt-4">
-                              <h4 className="font-medium mb-2">资源下载</h4>
-                              <div className="resource-list">
-                                {day.resources.map((resource: any, index: number) => (
-                                  <div key={index} className="resource-item">
-                                    <span className="resource-icon">
-                                      {resource.type === '文档' ? '📄' : 
-                                       resource.type === '表格' ? '📊' : 
-                                       resource.type === '视频' ? '🎥' : 
-                                       resource.type === '指南' ? '📖' : 
-                                       resource.type === '手册' ? '📚' : 
-                                       resource.type === '模板' ? '📋' : 
-                                       resource.type === '案例' ? '💡' : 
-                                       resource.type === '清单' ? '✅' : '📎'}
-                                    </span>
-                                    <span className="resource-name">{resource.name}</span>
-                                    <button className="resource-download">下载</button>
-                                  </div>
-                                ))}
-                              </div>
                             </div>
                             
                             <div className="day-actions mt-4">
