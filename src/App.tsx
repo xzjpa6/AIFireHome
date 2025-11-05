@@ -565,7 +565,7 @@ const SkillFinder: React.FC = () => {
         const timeoutId = setTimeout(() => controller.abort(), 30000)
         
         // 使用 Netlify Functions 代理
-        response = await fetch('/api/chat/completions', {
+        response = await fetch('/api/chat-completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

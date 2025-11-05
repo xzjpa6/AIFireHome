@@ -1,4 +1,5 @@
 // Netlify Function for DeepSeek API proxy
+// 处理 /api/chat-completions 请求
 exports.handler = async (event, context) => {
   // 设置CORS头
   const headers = {
