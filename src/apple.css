@@ -1189,7 +1189,7 @@
   color: var(--apple-text-secondary);
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   .apple-card {
     background: #1c1c1e;
     border-color: #38383a;
@@ -1199,7 +1199,7 @@
     background: #2c2c2e;
     box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
   }
-}
+} */
 
 /* 苹果风格统计数据 */
 .apple-stats {
@@ -1604,7 +1604,7 @@
   }
 }
 
-/* 深色模式支持 */
+/* 深色模式支持 - 已移除
 @media (prefers-color-scheme: dark) {
   :root {
     --apple-light-gray: #1c1c1e;
@@ -1615,7 +1615,6 @@
     --apple-shadow: rgba(255, 255, 255, 0.04);
   }
   
-  /* 技能发现器深色模式优化 */
   .apple-section-header h2 {
     background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
     -webkit-background-clip: text;
@@ -1629,7 +1628,6 @@
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
   
-  /* 技能评估容器深色模式优化 */
   .skill-assessment-container {
     background: rgba(28, 28, 30, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -1699,6 +1697,7 @@
     border-color: #38383a;
   }
 }
+*/
 
 /* 技能发现器样式 */
 .skill-assessment-container {
@@ -2704,7 +2703,7 @@
   }
 }
 
-/* 深色模式样式 */
+/* 深色模式样式 - 已移除
 body.dark-mode {
   --apple-background: #1c1c1e;
   --apple-card-background: #2c2c2e;
@@ -2718,3 +2717,4 @@ body.dark-mode .apple-app {
   background: var(--apple-dark-background);
   color: var(--apple-text-primary);
 }
+*/
