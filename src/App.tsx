@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import Navigation from './components/Navigation'
 import LoginModal from './components/LoginModal'
@@ -12,7 +12,7 @@ import AppleButton from './components/AppleButton'
 import CopyWeChatButton from './components/CopyWeChatButton'
 
 // 全局微信号配置（用于 WeChatCommunity 及潜在引用）
-const WECHAT_ID = (import.meta as any).env?.VITE_WECHAT_ID || 'AIPMAndy'
+// const WECHAT_ID = (import.meta as any).env?.VITE_WECHAT_ID || 'AIPMAndy' // 注释掉：在WeChatCommunity组件内部已重新定义
 
 // 定义接口类型
 interface FormDataType {
@@ -1057,18 +1057,18 @@ const BusinessPlanner: React.FC = () => {
   }
   
   // 清除localStorage中的数据
-  const clearLocalStorage = () => {
-    try {
-      localStorage.removeItem('businessPlannerData')
-      setSelectedBusiness('')
-      setPlan(null as any)
-      setCurrentDay(1)
-      setExpandedDay(null)
-      setCompletedDays([])
-    } catch (error) {
-      console.error('清除localStorage数据失败:', error)
-    }
-  }
+  // const clearLocalStorage = () => { // 注释掉：未使用的函数
+  //   try {
+  //     localStorage.removeItem('businessPlannerData')
+  //     setSelectedBusiness('')
+  //     setPlan(null as any)
+  //     setCurrentDay(1)
+  //     setExpandedDay(null)
+  //     setCompletedDays([])
+  //   } catch (error) {
+  //     console.error('清除localStorage数据失败:', error)
+  //   }
+  // }
 
   const businessOptions = [
     { 
@@ -3551,28 +3551,28 @@ const BusinessPlanner: React.FC = () => {
 // 保留第一个简化版本，删除重复的完整版本
 
 // 页面过渡动画组件
-const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const location = useLocation()
-  const [displayLocation, setDisplayLocation] = useState(location)
-  const [transitionStage, setTransitionStage] = useState('fadeIn')
+// const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) => { // 注释掉：未使用的组件
+//   const location = useLocation()
+//   const [displayLocation, setDisplayLocation] = useState(location)
+//   const [transitionStage, setTransitionStage] = useState('fadeIn')
 
-  useEffect(() => {
-    if (location !== displayLocation) {
-      setTransitionStage('fadeOut')
-    }
-  }, [location, displayLocation])
+//   useEffect(() => {
+//     if (location !== displayLocation) {
+//       setTransitionStage('fadeOut')
+//     }
+//   }, [location, displayLocation])
 
-  return (
-    <div className={`page-transition ${transitionStage}`} onAnimationEnd={() => {
-      if (transitionStage === 'fadeOut') {
-        setTransitionStage('fadeIn')
-        setDisplayLocation(location)
-      }
-    }}>
-      {children}
-    </div>
-  )
-}
+//   return (
+//     <div className={`page-transition ${transitionStage}`} onAnimationEnd={() => {
+//       if (transitionStage === 'fadeOut') {
+//         setTransitionStage('fadeIn')
+//         setDisplayLocation(location)
+//       }
+//     }}>
+//       {children}
+//     </div>
+//   )
+// }
 
 // App组件
 const App: React.FC = () => {
