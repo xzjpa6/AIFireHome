@@ -7,6 +7,11 @@
 
 # API代理配置 - 使用Netlify Functions处理认证头
 [[redirects]]
+  from = "/api/chat-completions"
+  to = "/.netlify/functions/chat"
+  status = 200
+
+[[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
