@@ -977,9 +977,7 @@ const SkillFinder: React.FC = () => {
                 </div>
               ) : (
                 <div className="text-center py-4">
-                  <div className="text-6xl mb-2">🔍</div>
-                  <h3 className="text-xl font-bold mb-1">填写问卷获取推荐</h3>
-                  <p className="text-text-secondary">填写问卷并提交，获取专属副业推荐</p>
+                  <p className="text-text-secondary">专属副业推荐ing</p>
                 </div>
               )}
             </div>

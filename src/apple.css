@@ -439,41 +439,6 @@
   text-align: center;
 }
 
-/* 深色模式支持 */
-@media (prefers-color-scheme: dark) {
-  .notification {
-    background: rgba(30, 30, 30, 0.95);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .notification-message {
-    color: #f5f5f7;
-  }
-  
-  .data-management-panel {
-    background: rgba(30, 30, 30, 0.95);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .panel-header {
-    border-bottom-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .panel-header h3,
-  .panel-section h4 {
-    color: #f5f5f7;
-  }
-  
-  .theme-toggle {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: #f5f5f7;
-  }
-  
-  .progress-bar {
-    background: rgba(255, 255, 255, 0.1);
-  }
-}
 
 /* 性能优化样式 */
 .lazy {
