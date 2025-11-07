@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link, useSearchParams } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import Navigation from './components/Navigation'
 import LoginModal from './components/LoginModal'
@@ -993,6 +993,7 @@ const SkillFinder: React.FC = () => {
 
 // 副业拆解组件
 const BusinessPlanner: React.FC = () => {
+  const [searchParams] = useSearchParams()
 
   
   // 从localStorage加载初始状态
@@ -1029,6 +1030,55 @@ const BusinessPlanner: React.FC = () => {
   const [expandedDay, setExpandedDay] = useState<number | null>(initialData.expandedDay)
   const [completedDays, setCompletedDays] = useState<number[]>(initialData.completedDays)
   const [formError, setFormError] = useState('')
+
+  // 解析URL参数并自动选择副业类型
+  React.useEffect(() => {
+    const skillFromUrl = searchParams.get('skill')
+    console.log('URL参数解析 - skill:', skillFromUrl, '当前选择的副业:', selectedBusiness)
+    
+    if (skillFromUrl) {
+      // 优化匹配逻辑：优先精确匹配名称，然后再匹配技能和标签
+      const lowerSkill = skillFromUrl.toLowerCase()
+      
+      // 首先尝试精确匹配名称
+      let matchedBusiness = businessOptions.find(option => 
+        option.name.toLowerCase() === lowerSkill
+      )
+      
+      // 如果没有精确匹配，尝试包含匹配，但增加匹配得分
+      if (!matchedBusiness) {
+        const businessWithScores = businessOptions.map(option => {
+          let score = 0
+          if (option.name.toLowerCase().includes(lowerSkill)) score += 3 // 名称匹配权重最高
+          if (option.skills.some(skill => skill.toLowerCase().includes(lowerSkill))) score += 2 // 技能匹配权重其次
+          if (option.tags.some(tag => tag.toLowerCase().includes(lowerSkill))) score += 1 // 标签匹配权重最低
+          return { business: option, score }
+        })
+        
+        // 过滤出得分大于0的，并按得分排序，取第一个
+        const validMatches = businessWithScores.filter(item => item.score > 0)
+        if (validMatches.length > 0) {
+          validMatches.sort((a, b) => b.score - a.score)
+          matchedBusiness = validMatches[0].business
+        }
+      }
+      
+      console.log('匹配结果:', matchedBusiness)
+      
+      if (matchedBusiness && matchedBusiness.id !== selectedBusiness) {
+        setSelectedBusiness(matchedBusiness.id)
+        // 保存到localStorage
+        saveToLocalStorage({
+          selectedBusiness: matchedBusiness.id,
+          plan: plan,
+          currentDay: currentDay,
+          expandedDay: expandedDay,
+          completedDays: completedDays
+        })
+        console.log('已自动选择副业:', matchedBusiness.name)
+      }
+    }
+  }, [searchParams, selectedBusiness, plan, currentDay, expandedDay, completedDays])
 
   // 表单验证函数
   const validateForm = (): boolean => {
@@ -3579,7 +3629,10 @@ const BusinessPlanner: React.FC = () => {
 const App: React.FC = () => {
   return (
     <div className="apple-app">
-      <Router>
+      <Router future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true
+      }}>
       <Routes>
         <Route path="/" element={
             <HomePage />
