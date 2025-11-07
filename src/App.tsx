@@ -911,64 +911,67 @@ const SkillFinder: React.FC = () => {
                       onClick={() => handleRecommendationSelect(rec)}
                     >
                       <div className="recommendation-header">
-                        <h3 className="font-bold text-lg flex items-center">
-                          {index === 0 ? '🌟 最佳匹配' : `💡 推荐${index}`}
-                          <span className="ml-2 text-sm bg-green-100 text-green-800 px-2 py-1 rounded">
-                            匹配度: {rec.matchScore}%
-                          </span>
-                        </h3>
-                        <div className="recommendation-meta">
-                          <span className={`difficulty-badge difficulty-${rec.difficulty}`}>
-                            {rec.difficulty}难度
-                          </span>
-                          <span className="time-badge">{rec.timeRequired}</span>
-                          <span className="income-badge">{rec.monthlyIncome}</span>
+                        <div className="recommendation-title-section">
+                          <h3 className="recommendation-title">
+                            {index === 0 ? '最佳匹配' : `推荐${index + 1}`}
+                          </h3>
+                          {rec.matchScore >= 85 && (
+                            <span className="recommendation-badge best-match">最佳匹配</span>
+                          )}
                         </div>
+                        <span className="recommendation-match-score">{rec.matchScore}% 匹配</span>
                       </div>
                       
-                      <p className="mb-3 text-gray-700">{rec.description}</p>
+                      <div className="recommendation-meta">
+                        <span className={`meta-badge difficulty-${rec.difficulty}`}>
+                          {rec.difficulty}难度
+                        </span>
+                        <span className="meta-badge time-badge">
+                          {rec.timeRequired}
+                        </span>
+                        <span className="meta-badge income-badge">
+                          {rec.monthlyIncome}
+                        </span>
+                      </div>
                       
-                      <div className="mb-3">
-                        <div className="text-sm font-medium mb-1">所需技能：</div>
-                        <div className="flex flex-wrap gap-1">
+                      <p className="recommendation-description">{rec.description}</p>
+                      
+                      <div className="recommendation-section">
+                        <div className="recommendation-section-title">所需技能</div>
+                        <div className="recommendation-tags">
                           {rec.skills.map((skill: string, skillIndex: number) => (
-                            <span key={skillIndex} className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
-                              {skill}
-                            </span>
+                            <span key={skillIndex} className="recommendation-tag skill-tag">{skill}</span>
                           ))}
                         </div>
                       </div>
                       
-                      <div className="mb-3">
-                        <div className="text-sm font-medium mb-1">推荐平台：</div>
-                        <div className="flex flex-wrap gap-1">
+                      <div className="recommendation-section">
+                        <div className="recommendation-section-title">推荐平台</div>
+                        <div className="recommendation-tags">
                           {rec.platforms.map((platform: string, platformIndex: number) => (
-                            <span key={platformIndex} className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">
-                              {platform}
-                            </span>
+                            <span key={platformIndex} className="recommendation-tag platform-tag">{platform}</span>
                           ))}
                         </div>
                       </div>
                       
-                      <div className="mb-4">
-                        <div className="flex flex-wrap gap-1">
+                      <div className="recommendation-section">
+                        <div className="recommendation-section-title">核心优势</div>
+                        <div className="recommendation-tags">
                           {rec.tags.map((tag: string, tagIndex: number) => (
-                            <span key={tagIndex} className="bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs">
-                              {tag}
-                            </span>
+                            <span key={tagIndex} className="recommendation-tag benefit-tag">{tag}</span>
                           ))}
                         </div>
                       </div>
                       
                       <div className="recommendation-actions">
                         <button 
-                          className="btn-outline text-sm"
+                          className="recommendation-btn primary"
                           onClick={(e) => {
                             e.stopPropagation()
                             window.location.href = `/business-planner?skill=${encodeURIComponent(rec.name)}`
                           }}
                         >
-                          查看详细拆解 →
+                          详细拆解
                         </button>
                         
                       </div>
